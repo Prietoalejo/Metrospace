@@ -5,6 +5,7 @@ import Inicio from "./paginas/Incio"; // O "./paginas/Inicio" si renombras el ar
 import Registro from "./paginas/Registro";
 import IniciarSesion from "./paginas/IniciarSesion";
 
+
 function App() {
   return (
     <Router>
@@ -13,6 +14,7 @@ function App() {
         <Route path="/" element={<Inicio />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/iniciar-sesion" element={<IniciarSesion />} />
+        <Route path="/registro" element={<Registro />} />
       </Routes>
     </Router>
   );

@@ -1,18 +1,34 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
 
 function Inicio() {
+  const navigate = useNavigate();
+
   return (
     <div className="landing">
-      <header className="header">
-        <div className="logo" style={{ width: 27, height: 48, background: "#eee", position: "absolute", left: 80, top: 26, borderRadius: 4, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          {/* Logo aquí */}
+      <header className="header" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px", height: 100 }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div className="logo" style={{ width: 27, height: 48, background: "#eee", borderRadius: 4 }} />
+          <div className="div" style={{ marginLeft: 24 }}>METROSPACE</div>
         </div>
-        <div className="div">METROSPACE</div>
-        <button className="button-instance">Registrarme</button>
-        <button className="design-component-instance-node">Ingresar</button>
+        <div>
+          <button
+            className="button-instance"
+            onClick={() => navigate("/registro")}
+          >
+            Registrarme
+          </button>
+          <button
+            className="design-component-instance-node"
+            onClick={() => navigate("/iniciar-sesion")}
+          >
+            Ingresar
+          </button>
+        </div>
       </header>
 
+      {/* ...resto del código igual... */}
       <div className="banner">
         <button className="button-3">Agendar espacios</button>
         <p className="p">
