@@ -1,7 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
 
+
+
+
 function IniciarSesion() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+   
+    try {
+      const auth = getAuth();
+      await signInWithEmailAndPassword(auth, email, password);
+      navigate("/dashboard");
+    } catch (error) {
+      alert(`Error: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div className="login">
       {/* Imagen de fondo */}
@@ -32,6 +59,7 @@ function IniciarSesion() {
         </div>
       </div>
 
+
       {/* Panel derecho */}
       <div
         style={{
@@ -50,12 +78,15 @@ function IniciarSesion() {
         <div style={{ marginBottom: 32, color: "#273b80", fontSize: 32, fontWeight: 600 }}>
           Inicio de sesión
         </div>
-        <form>
+        <form onSubmit={handleLogin}>
           <div style={{ marginBottom: 16 }}>
             <label style={{ fontWeight: 500 }}>Correo electrónico</label>
             <input
               type="email"
               placeholder="ejemplo@unimet.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               style={{
                 width: "100%",
                 padding: 12,
@@ -71,6 +102,9 @@ function IniciarSesion() {
             <input
               type="password"
               placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               style={{
                 width: "100%",
                 padding: 12,
@@ -88,10 +122,11 @@ function IniciarSesion() {
           </div>
           <button
             type="submit"
+            disabled={loading}
             style={{
               width: "100%",
               padding: 12,
-              background: "#222",
+              background: loading ? "#555" : "#222",
               color: "#fff",
               border: "none",
               borderRadius: 8,
@@ -99,9 +134,10 @@ function IniciarSesion() {
               fontWeight: 600,
               marginTop: 16,
               marginBottom: 16,
+              cursor: loading ? "not-allowed" : "pointer",
             }}
           >
-            Ingresar
+            {loading ? "Cargando..." : "Ingresar"}
           </button>
         </form>
         <div style={{ textAlign: "center", marginBottom: 16, fontSize: 12 }}>
@@ -138,4 +174,8 @@ function IniciarSesion() {
   );
 }
 
+
 export default IniciarSesion;
+
+
+

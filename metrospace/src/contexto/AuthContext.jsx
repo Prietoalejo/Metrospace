@@ -1,21 +1,78 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { auth } from '../firebase';
+import { signOut } from 'firebase/auth';
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+
 
 const AuthContext = createContext();
 
-export function AuthProvider({ children }) {
-  // Simula un usuario autenticado para pruebas
-  const [usuario, setUsuario] = useState({ email: "demo@demo.com", rol: "usuario" });
-
-  const login = (datosUsuario) => setUsuario(datosUsuario);
-  const logout = () => setUsuario(null);
-
-  return (
-    <AuthContext.Provider value={{ usuario, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
 
 export function useAuth() {
   return useContext(AuthContext);
 }
+
+
+export function AuthProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        // Obtener datos adicionales de Firestore
+        const db = getFirestore();
+        const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+       
+        setCurrentUser({
+          ...user,
+          userData: userDoc.exists() ? userDoc.data() : null
+        });
+      } else {
+        setCurrentUser(null);
+      }
+      setLoading(false);
+    });
+
+
+    return unsubscribe;
+  }, []);
+
+
+  const googleLogin = async () => {
+    try {
+      const user = await signInWithGoogle();
+      setUser(user); // Actualiza el estado del usuario
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+      setCurrentUser(null);
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
+  const value = {
+    currentUser,
+    loading,
+    logout,
+    googleLogin
+  };
+
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+}
+
+
+
+
+

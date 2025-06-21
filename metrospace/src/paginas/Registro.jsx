@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore"; // Añadir Firestore
 import "../estilos/style.css";
+
 
 function Registro() {
   const [paso, setPaso] = useState(1);
@@ -10,18 +13,20 @@ function Registro() {
     cedula: "",
     correo: "",
     telefono: "",
-    categoria: "",
+    categoria: "Estudiante", // Por defecto estudiante
     contrasena: "",
     repetirContrasena: "",
   });
   const [exito, setExito] = useState(false);
   const navigate = useNavigate();
 
+
   // Maneja cambios en los campos
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
+
 
   // Paso 1: Datos personales
   const PasoUno = (
@@ -53,7 +58,7 @@ function Registro() {
           <label>Categoría</label>
           <div>
             <label>
-              <input type="radio" name="categoria" value="Estudiante" checked={form.categoria === "Estudiante"} onChange={handleChange} />
+              <input type="radio" name="categoria" value="Estudiante"  checked={form.categoria === "Estudiante"} onChange={handleChange} />
               Estudiante
             </label>
             <label style={{ marginLeft: 16 }}>
@@ -73,6 +78,49 @@ function Registro() {
       </form>
     </div>
   );
+   const [error, setError] = useState(""); // Estado para manejar errores
+
+
+  // Función para registrar usuario
+  const handleRegister = async () => {
+    // Validar que las contraseñas coincidan
+    if (form.contrasena !== form.repetirContrasena) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+
+
+    try {
+      // Crear usuario en Authentication
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        form.correo,
+        form.contrasena
+      );
+     
+      // Guardar datos adicionales en Firestore
+      const db = getFirestore();
+      await setDoc(doc(db, "usuarios", userCredential.user.uid), {
+        nombre: form.nombre,
+        apellido: form.apellido,
+        cedula: form.cedula,
+        telefono: form.telefono,
+        categoria: form.categoria,
+        correo: form.correo,
+        fechaRegistro: new Date()
+      });
+
+
+      setExito(true);
+    } catch (error) {
+      console.error("Error en registro:", error);
+      setError(error.message);
+    }
+  };
+
+
+
 
   // Paso 2: Contraseña
   const PasoDos = (
@@ -92,13 +140,18 @@ function Registro() {
           <button type="button" style={{ flex: 1, background: "#eee", border: "none", padding: 10, borderRadius: 6 }} onClick={() => setPaso(1)}>
             Regresar
           </button>
-          <button type="button" style={{ flex: 1, background: "#222", color: "#fff", border: "none", padding: 10, borderRadius: 6 }} onClick={() => setExito(true)}>
-            Finalizar
-          </button>
+          <button
+      type="button"
+      style={{ flex: 1, background: "#222", color: "#fff", border: "none", padding: 10, borderRadius: 6 }}
+      onClick={handleRegister}  // Cambiado a handleRegister
+    >
+      Finalizar
+    </button>
         </div>
       </form>
     </div>
   );
+
 
   // Éxito
   const Exito = (
@@ -111,6 +164,7 @@ function Registro() {
       </button>
     </div>
   );
+
 
   // Fondo y layout igual a tus capturas
   return (
@@ -157,8 +211,16 @@ function Registro() {
       >
         {!exito ? (paso === 1 ? PasoUno : PasoDos) : Exito}
       </div>
+      <div>
+      {error && <div className="error-message">{error}</div>}
+      {!exito ? (paso === 1 ? PasoUno : PasoDos) : Exito}
+    </div>
     </div>
   );
 }
 
+
 export default Registro;
+
+
+

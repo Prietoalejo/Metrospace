@@ -2,8 +2,10 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
 
+
 function DashboardUsuario() {
   const navigate = useNavigate();
+
 
   return (
     <div className="landing">
@@ -115,13 +117,14 @@ function DashboardUsuario() {
           Agendar espacios
         </button>
         <p className="p">
-          Metrospaces es la plataforma oficial de la Dirección de Gestión de
-          Eventos y Protocolo de la Universidad Metropolitana, diseñada para
-          que estudiantes, profesores, investigadores reserven espacios de
+          Metrospaces es la plataforma oficial de la Dirección de Gestión de
+          Eventos y Protocolo de la Universidad Metropolitana, diseñada para
+          que estudiantes, profesores, investigadores reserven espacios de
           manera rápida y segura.
         </p>
         <p className="title">¿Necesitas un espacio para próximo evento?</p>
       </div>
+
 
       <div className="panel">
         <p className="tu-universidad-tus">
@@ -130,6 +133,7 @@ function DashboardUsuario() {
           Plataforma Oficial de Alquiler para Estudiantes y Profesores.
         </p>
       </div>
+
 
       <div className="conoce-nuestros">
         <div className="text-wrapper-3">Conoce nuestros espacios</div>
@@ -149,6 +153,7 @@ function DashboardUsuario() {
         </div>
       </div>
 
+
       <footer className="footer">
         <div className="text">
           <p className="text-wrapper-5">
@@ -167,4 +172,8 @@ function DashboardUsuario() {
   );
 }
 
+
 export default DashboardUsuario;
+
+
+

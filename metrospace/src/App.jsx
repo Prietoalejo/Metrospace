@@ -2,19 +2,19 @@ import React from "react";
 import MisReservas from "./paginas/MisReservas";
 import PerfilUsuario from "./paginas/PerfilUsuario";
 import DashboardUsuario from "./paginas/DashboardUsuario";
-import RutaProtegida from "./componetes/RutaProtegida"; // Corrige la ruta: 'componetes' -> 'componentes'
+import RutaProtegida from "./componetes/RutaProtegida";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import BarraNavegacion from "./componetes/BarraNavegar";
-import Inicio from "./paginas/Incio"; // O "./paginas/Inicio" si renombras el archivo
+import Inicio from "./paginas/Incio";
 import Registro from "./paginas/Registro";
 import IniciarSesion from "./paginas/IniciarSesion";
-import { AuthProvider } from "./contexto/AuthContext"; // Asegúrate de envolver el Router
+import { AuthProvider } from "./contexto/AuthContext";
+
 
 function App() {
+ 
   return (
     <AuthProvider>
       <Router>
-        {/* <BarraNavegacion /> */}
         <Routes>
           <Route path="/" element={<Inicio />} />
           <Route path="/registro" element={<Registro />} />
@@ -36,17 +36,19 @@ function App() {
             }
           />
           <Route
-              path="/reservas"
-              element={
-                <RutaProtegida>
-                  <MisReservas />
-                </RutaProtegida>
-              }
-            />
+            path="/reservas"
+            element={
+              <RutaProtegida>
+                <MisReservas />
+              </RutaProtegida>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>
   );
 }
 
+
 export default App;
+
