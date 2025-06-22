@@ -1,7 +1,21 @@
+<<<<<<< Updated upstream
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+=======
+import React from "react";
+import MisReservas from "./paginas/MisReservas";
+import PerfilUsuario from "./paginas/PerfilUsuario";
+import DashboardUsuario from "./paginas/DashboardUsuario";
+import RutaProtegida from "./componetes/RutaProtegida";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Inicio from "./paginas/Incio";   
+import Registro from "./paginas/Registro";
+import IniciarSesion from "./paginas/IniciarSesion";
+import { AuthProvider } from "./contexto/AuthContext";
+
+>>>>>>> Stashed changes
 
 function App() {
   const [count, setCount] = useState(0)
