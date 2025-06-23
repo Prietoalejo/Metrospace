@@ -8,6 +8,7 @@ import Inicio from "./paginas/Incio";
 import Registro from "./paginas/Registro";
 import IniciarSesion from "./paginas/IniciarSesion";
 import { AuthProvider } from "./contexto/AuthContext";
+import { uploadImage } from "../supabaseCredentials.js";
 
 
 function App() {

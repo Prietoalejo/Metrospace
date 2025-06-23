@@ -7,6 +7,7 @@ import { getFirestore, doc, getDoc } from "firebase/firestore";
 const AuthContext = createContext();
 
 
+
 export function useAuth() {
   return useContext(AuthContext);
 }
@@ -14,6 +15,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
 
@@ -23,13 +25,16 @@ export function AuthProvider({ children }) {
         // Obtener datos adicionales de Firestore
         const db = getFirestore();
         const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+        const userData = userDoc.exists() ? userDoc.data() : null;
        
         setCurrentUser({
           ...user,
           userData: userDoc.exists() ? userDoc.data() : null
         });
+        setProfile(userData);
       } else {
         setCurrentUser(null);
+        setProfile(null);
       }
       setLoading(false);
     });
@@ -61,7 +66,9 @@ export function AuthProvider({ children }) {
     currentUser,
     loading,
     logout,
-    googleLogin
+    googleLogin,
+    profile,     
+    setProfile
   };
 
 

@@ -2,9 +2,60 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
 import { useAuth } from "../contexto/AuthContext";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { uploadImage } from "../../supabaseCredentials";
+import { app } from "../firebase";
+import { doc, updateDoc } from "firebase/firestore";
+
+
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 
 function PerfilUsuario() {
+
+ 
+  const [isUploading, setIsUploading] = useState(false);
+  const {profile, setProfile} = useAuth();
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    
+    await updateDoc(userDocRef, {
+    fotoprfil: imageUrl
+    });
+    
+    if (!file) return; 
+    try {
+
+      setIsUploading(true);
+      const user = auth.currentUser;
+      const imageUrl = await uploadImage(file, 'fotoprfil', user.uid);
+      setProfile({
+        ...profile,
+        fotoprfil: imageUrl
+      })
+
+      
+      const userDocRef = doc(db, "usuarios", user.uid);
+      await updateDoc(userDocRef, {
+        fotoprfil: imageUrl
+      });
+
+      setUserData(prev => ({
+    ...prev,
+    fotoprfil: imageUrl
+    }));
+
+        
+    } catch (error) {
+      alert("Error al subir la imagen: " + error.message);
+    }finally{
+      setIsUploading(false);
+    }
+
+  }
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
   const [userData, setUserData] = useState(null);
@@ -73,7 +124,7 @@ function PerfilUsuario() {
           boxSizing: "border-box",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap : 24, flexDirection: "row" }}>
           <div
             className="logo"
             style={{
@@ -98,7 +149,7 @@ function PerfilUsuario() {
             METROSPACE
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap : 24, flexDirection: "row", minWidth: 0 }}>
           <button
             className="button-instance"
             style={{
@@ -133,19 +184,28 @@ function PerfilUsuario() {
           >
             <div
               style={{
-                width: 32,
-                height: 32,
-                borderRadius: "50%",
-                background: "#e0e0e0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 18,
-                color: "#888",
-              }}
-            >
-              <span role="img" aria-label="user">👤</span>
-            </div>
+              width: 32,
+              height: 32,
+              borderRadius: "50%",
+              background: "#e0e0e0",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 18,
+              color: "#888",
+              overflow: "hidden"
+      }}
+  >
+  {userData?.fotoprfil ? (
+    <img
+      src={userData.fotoprfil}
+      alt="Avatar"
+      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+    />
+  ) : (
+    <span role="img" aria-label="user">👤</span>
+  )}
+</div>
             Mi perfil
           </button>
         </div>
@@ -190,18 +250,45 @@ function PerfilUsuario() {
           boxShadow: "0 2px 8px #0001"
         }}>
           <div style={{
-            width: "100%",
-            height: "100%",
-            borderRadius: "50%",
-            background: "#e0e0e0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 48,
-            color: "#bbb"
-          }}>
-            {userData?.nombre?.charAt(0) || '👤'}
-          </div>
+          width: "100%",
+          height: "100%",
+          borderRadius: "50%",
+          background: "#e0e0e0",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: 48,
+          color: "#bbb",
+          overflow: "hidden"
+        }}>
+  {userData?.fotoprfil ? (
+    <img
+      src={userData.fotoprfil}
+      alt="Avatar"
+      style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+    />
+  ) : (
+    userData?.nombre?.charAt(0) || '👤'
+  )}
+</div>
+          {/* Input para subir imagen */}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            disabled ={isUploading}
+
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              top: 0,
+              left: 0,
+              opacity: 0,
+              cursor: "pointer"
+            }}/>
+          {/* Indicador de carga */}
+          {isUploading && <p className = "mt-2 text blue-600">Subiendo...</p>}
           {/* Icono de editar */}
           <div style={{
             position: "absolute",
