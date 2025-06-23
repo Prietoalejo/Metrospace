@@ -49,5 +49,6 @@ export const signInWithGoogle = async () => {
     }
 };
 
+
 // 4. Exporta las instancias de los servicios si las necesitas en otros lugares
 export { auth, db };

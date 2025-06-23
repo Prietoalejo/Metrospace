@@ -16,6 +16,7 @@ export const uploadImage = async (File, bucket,folder) => {
             upsert: false
         });
 
+        
         const {data:urlData}= supabase.storage.from(bucket).getPublicUrl(filePath);
         return urlData.publicUrl;
 
