@@ -8,10 +8,10 @@ import Inicio from "./paginas/Incio";
 import Registro from "./paginas/Registro";
 import IniciarSesion from "./paginas/IniciarSesion";
 import { AuthProvider } from "./contexto/AuthContext";
-
+import PerfilAdmin from "./paginas/PerfilAdmin";
+import Reportes from "./paginas/Reportes";
 
 function App() {
- 
   return (
     <AuthProvider>
       <Router>
@@ -43,12 +43,15 @@ function App() {
               </RutaProtegida>
             }
           />
+          {/* Nueva ruta para el perfil de administrador */}
+          <Route path="/perfil-admin" element={<PerfilAdmin />} />
+
+          <Route path="/reportes" element={<Reportes />} />
+          
         </Routes>
       </Router>
     </AuthProvider>
   );
 }
 
-
 export default App;
-
