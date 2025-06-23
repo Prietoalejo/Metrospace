@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 
@@ -44,16 +44,6 @@ export function AuthProvider({ children }) {
   }, []);
 
 
-  const googleLogin = async () => {
-    try {
-      const user = await signInWithGoogle();
-      setUser(user); // Actualiza el estado del usuario
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-
   const logout = async () => {
     try {
       await signOut(auth);
@@ -66,9 +56,11 @@ export function AuthProvider({ children }) {
     currentUser,
     loading,
     logout,
+    db,
     googleLogin,
     profile,     
     setProfile
+    
   };
 
 
