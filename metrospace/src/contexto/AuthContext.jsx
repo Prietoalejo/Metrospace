@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { signInWithGoogle } from '../firebase';
 
 
 const AuthContext = createContext();
@@ -52,6 +53,9 @@ export function AuthProvider({ children }) {
       console.error("Error signing out: ", error);
     }
   };
+  const googleLogin = async () => {
+  return await signInWithGoogle();
+};
   const value = {
     currentUser,
     loading,
