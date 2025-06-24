@@ -21,28 +21,37 @@ export function AuthProvider({ children }) {
 
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        // Obtener datos adicionales de Firestore
-        const db = getFirestore();
-        const userDoc = await getDoc(doc(db, "usuarios", user.uid));
-        const userData = userDoc.exists() ? userDoc.data() : null;
-       
-        setCurrentUser({
-          ...user,
-          userData: userDoc.exists() ? userDoc.data() : null
+  const unsubscribe = auth.onAuthStateChanged(async (user) => {
+    if (user) {
+      const db = getFirestore();
+      const userDocRef = doc(db, "usuarios", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      // Si el usuario NO existe en Firestore, lo creamos
+      if (!userDoc.exists()) {
+        await setDoc(userDocRef, {
+          nombre: user.displayName || "",
+          apellido: "",
+          cedula: "",
+          telefono: "",
+          categoria: "Estudiante",
+          correo: user.email,
+          fechaRegistro: new Date()
         });
-        setProfile(userData);
-      } else {
-        setCurrentUser(null);
-        setProfile(null);
       }
-      setLoading(false);
-    });
 
-
-    return unsubscribe;
-  }, []);
+      // Luego, actualiza el estado como siempre
+      const userData = (await getDoc(userDocRef)).data();
+      setCurrentUser({
+        ...user,
+        userData
+      });
+    } else {
+      setCurrentUser(null);
+    }
+  });
+  return () => unsubscribe();
+}, []);
 
 
   const logout = async () => {
