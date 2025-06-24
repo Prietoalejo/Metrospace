@@ -63,7 +63,8 @@ export function AuthProvider({ children }) {
     db,
     googleLogin,
     profile,     
-    setProfile
+    setProfile,
+    setCurrentUser
     
   };
 
