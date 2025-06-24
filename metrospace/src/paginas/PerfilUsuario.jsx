@@ -19,43 +19,46 @@ function PerfilUsuario() {
   const [isUploading, setIsUploading] = useState(false);
   const {profile, setProfile} = useAuth();
 
-  const handleFileChange = async (e) => {
-    const file = e.target.files[0];
-    
-    await updateDoc(userDocRef, {
-    fotoprfil: imageUrl
+ const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // Solo aceptar imágenes
+  if (!file.type.startsWith("image/")) {
+    alert("Solo puedes subir archivos de imagen.");
+    return;
+  }
+
+  try {
+    setIsUploading(true);
+    const user = auth.currentUser;
+    // Subir imagen y obtener URL
+    const imageUrl = await uploadImage(file, 'fotoprfil', user.uid);
+
+    // Actualizar perfil en contexto
+    setProfile({
+      ...profile,
+      fotoprfil: imageUrl
     });
-    
-    if (!file) return; 
-    try {
 
-      setIsUploading(true);
-      const user = auth.currentUser;
-      const imageUrl = await uploadImage(file, 'fotoprfil', user.uid);
-      setProfile({
-        ...profile,
-        fotoprfil: imageUrl
-      })
+    // Actualizar en Firestore
+    const userDocRef = doc(db, "usuarios", user.uid);
+    await updateDoc(userDocRef, {
+      fotoprfil: imageUrl
+    });
 
-      
-      const userDocRef = doc(db, "usuarios", user.uid);
-      await updateDoc(userDocRef, {
-        fotoprfil: imageUrl
-      });
-
-      setUserData(prev => ({
-    ...prev,
-    fotoprfil: imageUrl
+    // Actualizar estado local
+    setUserData(prev => ({
+      ...prev,
+      fotoprfil: imageUrl
     }));
 
-        
-    } catch (error) {
-      alert("Error al subir la imagen: " + error.message);
-    }finally{
-      setIsUploading(false);
-    }
-
+  } catch (error) {
+    alert("Error al subir la imagen: " + error.message);
+  } finally {
+    setIsUploading(false);
   }
+};
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
   const [userData, setUserData] = useState(null);
