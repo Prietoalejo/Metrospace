@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "metrospace-496d5"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }
