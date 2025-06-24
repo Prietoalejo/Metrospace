@@ -63,7 +63,7 @@ function PerfilUsuario() {
   }
 };
   const navigate = useNavigate();
-  const { currentUser, logout } = useAuth();
+  const { currentUser, logout, setCurrentUser} = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
