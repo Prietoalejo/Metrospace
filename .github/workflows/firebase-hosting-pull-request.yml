@@ -2,10 +2,7 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on PR
-on:
-  pull_request:
-    branches:
-      - Auth
+on: pull_request
 permissions:
   checks: write
   contents: read
@@ -16,12 +13,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          cd metrospace
-          npm ci
-          npm run build
+      - run: npm ci && npm run build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_METROSPACE_HOST_UNI }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_METROSPACE_496D5 }}
           projectId: metrospace-496d5
