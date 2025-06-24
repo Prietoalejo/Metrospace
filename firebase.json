@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "/metrospace/dist",
+    "public": "metrospace/dist",
     "ignore": [
       "firebase.json",
       "**/.*",
