@@ -66,14 +66,13 @@ function PerfilUsuario() {
 
 
   useEffect(() => {
-    if (currentUser && currentUser.userData) {
-      setUserData(currentUser.userData);
-      setLoading(false);
-    } else if (currentUser) {
-      // Si hay usuario pero no datos adicionales
-      setLoading(false);
-    }
-  }, [currentUser]);
+  if (currentUser && currentUser.userData && !userData) {
+    setUserData(currentUser.userData);
+    setLoading(false);
+  } else if (currentUser && !userData) {
+    setLoading(false);
+  }
+}, [currentUser, userData]);
 
 
   const handleLogout = async () => {
