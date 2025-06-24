@@ -3,6 +3,7 @@ import { auth, db } from '../firebase';
 import { signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { signInWithGoogle } from '../firebase';
+import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
 
 
 const AuthContext = createContext();
