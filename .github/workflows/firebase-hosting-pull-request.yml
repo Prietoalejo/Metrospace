@@ -24,4 +24,4 @@ jobs:
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_METROSPACE_HOST_UNI }}
-          projectId: metrospace-host-uni
+          projectId: metrospace-496d5
