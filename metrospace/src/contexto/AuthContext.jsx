@@ -50,6 +50,7 @@ export function AuthProvider({ children }) {
     } else {
       setCurrentUser(null);
     }
+    setLoading(false); 
   });
   return () => unsubscribe();
 }, []);
