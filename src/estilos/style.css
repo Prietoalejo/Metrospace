@@ -16,7 +16,7 @@
   border-left-style: none;
   border-right-style: none;
   border-top-style: none;
-  box-shadow: 0px 4px 8px #0000000f;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1), 0px 2px 6px rgba(0, 0, 0, 0.08);
   gap: var(--size-space-600);
   height: 100px;
   position: relative;
@@ -60,13 +60,84 @@
 
 .landing .banner {
   align-self: stretch;
-  background-image: url(./f4-1.png);
-  background-position: 50% 50%;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    url("https://www.unimet.edu.ve/wp-content/uploads/2025/06/Plaza-del-Rectorado-Unimet-980x735.jpg");
+  background-position: center center;
   background-size: cover;
+  background-repeat: no-repeat;
   height: 576px;
   position: relative;
   width: 100%;
   z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+.landing .hero-title {
+  color: #ffffff;
+  font-family: "Roboto-Bold", Helvetica;
+  font-size: 56px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 24px 0;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+  max-width: 900px;
+  animation: fadeInUp 1s ease-out;
+}
+
+.landing .hero-description {
+  color: #ffffff;
+  font-family: "Roboto Condensed-Regular", Helvetica;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.6;
+  margin: 0 0 40px 0;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  max-width: 700px;
+  animation: fadeInUp 1s ease-out 0.2s both;
+}
+
+.landing .hero-button {
+  background: linear-gradient(135deg, #f78628 0%, #e67320 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-family: "Roboto-Bold", Helvetica;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 18px 36px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0px 6px 20px rgba(247, 134, 40, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: fadeInUp 1s ease-out 0.4s both;
+}
+
+.landing .hero-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 10px 30px rgba(247, 134, 40, 0.6);
+  background: linear-gradient(135deg, #ff8f3a 0%, #f78628 100%);
+}
+
+.landing .hero-button:active {
+  transform: translateY(-1px);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .landing .button-2 {
@@ -74,30 +145,23 @@
 }
 
 .landing .button-3 {
-  border-radius: 16px !important;
-  display: flex !important;
-  height: 69px !important;
-  left: 80px !important;
-  position: absolute !important;
-  top: 445px !important;
-  width: 282px !important;
 }
 
 .landing .p {
-  color: #ffffff;
   font-family: "Roboto Condensed-Regular", Helvetica;
   font-size: 20px;
   font-weight: 400;
   left: 80px;
   letter-spacing: 0;
   line-height: normal;
-  position: absolute;
-  top: 295px;
+
+  margin-top: 10px;
   width: 737px;
+  color: #273b80;
 }
 
 .landing .title {
-  color: #ffffff;
+  color: #273b80;
   font-family: "Roboto-Bold", Helvetica;
   font-size: 64px;
   font-weight: 700;
@@ -105,8 +169,7 @@
   left: 80px;
   letter-spacing: 0;
   line-height: 64px;
-  position: absolute;
-  top: 119px;
+
   width: 737px;
 }
 
@@ -126,13 +189,12 @@
 }
 
 .landing .tu-universidad-tus {
-  color: #ffffff;
   font-family: "Roboto-Regular", Helvetica;
   font-size: 32px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: normal;
-  margin-top: -1.00px;
+  margin-top: -1px;
   position: relative;
   text-align: center;
   width: fit-content;
@@ -152,13 +214,13 @@
 }
 
 .landing .text-wrapper-2 {
-  color: var(--color-text-default-default);
+  color: #273b80;
   font-family: "Roboto-Regular", Helvetica;
   font-size: 36px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 36px;
-  margin-top: -1.00px;
+  margin-top: -1px;
   position: relative;
   white-space: nowrap;
   width: fit-content;
@@ -166,10 +228,12 @@
 
 .landing .carrusel {
   display: flex;
-  gap: 200px;
+  gap: 40px;
   overflow-x: auto;
   width: 100%;
   box-sizing: border-box;
+  padding: 0 20px;
+  justify-content: center;
 }
 
 .landing .carrusel::-webkit-scrollbar {
@@ -178,32 +242,49 @@
 }
 
 .landing .div-2 {
-  align-items: flex-start;
+  align-items: center;
   display: inline-flex;
   flex: 0 0 auto;
   flex-direction: column;
-  gap: 8px;
+  gap: 16px;
   position: relative;
+  transition: transform 0.3s ease;
+}
+
+.landing .div-2:hover {
+  transform: translateY(-8px);
 }
 
 .landing .img {
-  width: 100%;
-  max-width: 350px;
-  height: 220px;
+  width: 380px;
+  height: 280px;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.landing .img:hover {
+  box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.25);
+  transform: scale(1.02);
 }
 
 .landing .text-wrapper-3 {
   align-self: stretch;
   color: var(--color-text-neutral-default);
-  font-family: "Roboto-Regular", Helvetica;
-  font-size: 20px;
-  font-weight: 400;
+  font-family: "Roboto-Bold", Helvetica;
+  font-size: 22px;
+  font-weight: 700;
   letter-spacing: 0;
-  line-height: 20px;
+  line-height: 24px;
   position: relative;
   text-align: center;
+  transition: color 0.3s ease;
+}
+
+.landing .div-2:hover .text-wrapper-3 {
+  color: #f78628;
 }
 
 .landing .footer {
@@ -228,7 +309,6 @@
 }
 
 .landing .text-wrapper-4 {
-  color: #ffffff;
   font-family: "Roboto-Bold", Helvetica;
   font-size: 16px;
   font-weight: 700;
@@ -248,7 +328,6 @@
 }
 
 .landing .siguenos-en-intagram {
-  color: #ffffff;
   font-family: "Roboto-Regular", Helvetica;
   font-size: 16px;
   font-weight: 400;
@@ -261,7 +340,6 @@
 }
 
 .landing .span {
-  color: #ffffff;
   font-family: "Roboto-Regular", Helvetica;
   font-size: 16px;
   font-weight: 400;
@@ -272,4 +350,35 @@
 .landing .text-wrapper-5 {
   font-family: "Roboto-Bold", Helvetica;
   font-weight: 700;
+}
+
+/* Estilos para botones de navegación cuando el usuario está autenticado */
+.landing .nav-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+.landing .profile-button:hover {
+  background: rgba(219, 132, 17, 0.1) !important;
+  border-color: #f78628 !important;
+  transition: all 0.2s ease;
+}
+
+.landing .logout-button:hover {
+  background: #c82333 !important;
+  transform: translateY(-1px);
+  transition: all 0.2s ease;
+}
+
+/* Mejoras para botones existentes */
+.landing .button-instance,
+.landing .design-component-instance-node {
+  transition: all 0.2s ease;
+}
+
+.landing .button-instance:hover,
+.landing .design-component-instance-node:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
 }

@@ -58,7 +58,7 @@ function Registro() {
           <label>Categoría</label>
           <div>
             <label>
-              <input type="radio" name="categoria" value="Estudiante"  checked={form.categoria === "Estudiante"} onChange={handleChange} />
+              <input type="radio" name="categoria" value="Estudiante" checked={form.categoria === "Estudiante"} onChange={handleChange} />
               Estudiante
             </label>
             <label style={{ marginLeft: 16 }}>
@@ -78,7 +78,7 @@ function Registro() {
       </form>
     </div>
   );
-   const [error, setError] = useState(""); // Estado para manejar errores
+  const [error, setError] = useState(""); // Estado para manejar errores
 
 
   // Función para registrar usuario
@@ -98,7 +98,7 @@ function Registro() {
         form.correo,
         form.contrasena
       );
-     
+
       // Guardar datos adicionales en Firestore
       const db = getFirestore();
       await setDoc(doc(db, "usuarios", userCredential.user.uid), {
@@ -141,12 +141,12 @@ function Registro() {
             Regresar
           </button>
           <button
-      type="button"
-      style={{ flex: 1, background: "#222", color: "#fff", border: "none", padding: 10, borderRadius: 6 }}
-      onClick={handleRegister}  // Cambiado a handleRegister
-    >
-      Finalizar
-    </button>
+            type="button"
+            style={{ flex: 1, background: "#222", color: "#fff", border: "none", padding: 10, borderRadius: 6 }}
+            onClick={handleRegister}  // Cambiado a handleRegister
+          >
+            Finalizar
+          </button>
         </div>
       </form>
     </div>
@@ -159,7 +159,7 @@ function Registro() {
       <div style={{ fontSize: 64, color: "#273b80", marginBottom: 16 }}>✔️</div>
       <h2 style={{ color: "#273b80" }}>¡Registro exitoso!</h2>
       <div style={{ marginBottom: 24 }}>Ya puedes ingresar a nuestro portal</div>
-      <button style={{ width: "100%", background: "#222", color: "#fff", border: "none", padding: 12, borderRadius: 6 }} onClick={() => navigate("/iniciar-sesion")}>
+      <button style={{ width: "100%", background: "#222", color: "#fff", border: "none", padding: 12, borderRadius: 6 }} onClick={() => navigate("/")}>
         Ir al inicio
       </button>
     </div>
@@ -212,9 +212,9 @@ function Registro() {
         {!exito ? (paso === 1 ? PasoUno : PasoDos) : Exito}
       </div>
       <div>
-      {error && <div className="error-message">{error}</div>}
-      {!exito ? (paso === 1 ? PasoUno : PasoDos) : Exito}
-    </div>
+        {error && <div className="error-message">{error}</div>}
+        {!exito ? (paso === 1 ? PasoUno : PasoDos) : Exito}
+      </div>
     </div>
   );
 }
