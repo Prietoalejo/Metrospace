@@ -254,6 +254,7 @@ function MisReservas() {
               alignItems: "center",
               gap: 8,
             }}
+            onClick={() => navigate('/nueva-reserva')}
           >
             Nueva reserva
             <div

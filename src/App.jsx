@@ -12,6 +12,7 @@ import { uploadImage } from "../supabaseCredentials.js";
 
 import PerfilAdmin from "./paginas/PerfilAdmin";
 import Reportes from "./paginas/Reportes";
+import NuevaReserva from "./paginas/NuevaReserva";
 
 function App() {
   return (
@@ -49,7 +50,14 @@ function App() {
           <Route path="/perfil-admin" element={<PerfilAdmin />} />
 
           <Route path="/reportes" element={<Reportes />} />
-          
+          <Route
+            path="/nueva-reserva"
+            element={
+              <RutaProtegida>
+                <NuevaReserva />
+              </RutaProtegida>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>
