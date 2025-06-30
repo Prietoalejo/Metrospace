@@ -17,7 +17,7 @@ function PerfilUsuario() {
 
  
   const [isUploading, setIsUploading] = useState(false);
-  const {profile, setProfile} = useAuth();
+  const { setProfile } = useAuth();
 
  const handleFileChange = async (e) => {
   const file = e.target.files[0];
@@ -219,7 +219,6 @@ function PerfilUsuario() {
 
       {/* CONTENIDO CENTRAL DEL PERFIL */}
       <div style={{ maxWidth: 1100, margin: "40px auto 0 auto" }}>
-        {/* Breadcrumb */}
         <div style={{ color: "#888", fontSize: 16, marginBottom: 16 }}>
           Inicio <span style={{ color: "#222" }}>{' > '}</span> <b>Mi perfil</b>
         </div>

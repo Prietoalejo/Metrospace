@@ -12,6 +12,7 @@ import { uploadImage } from "../supabaseCredentials.js";
 
 import PerfilAdmin from "./paginas/PerfilAdmin";
 import Reportes from "./paginas/Reportes";
+import NuevaReservaCompleta from "./paginas/NuevaReservaCompleta";
 import NuevaReserva from "./paginas/NuevaReserva";
 
 function App() {
@@ -55,6 +56,14 @@ function App() {
             element={
               <RutaProtegida>
                 <NuevaReserva />
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/nueva-reserva/:id"
+            element={
+              <RutaProtegida>
+                <NuevaReservaCompleta />
               </RutaProtegida>
             }
           />

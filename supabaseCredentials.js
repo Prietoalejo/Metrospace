@@ -11,10 +11,11 @@ export const uploadImage = async (File, bucket,folder) => {
         const fileExtension = File.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExtension}`;
         const filePath = `${folder}/${fileName}`;
-        const {error} = await supabase.storage.from(bucket).upload(filePath, File, {
+        const { error } = await supabase.storage.from(bucket).upload(filePath, File, {
             cacheControl: '3600',
             upsert: false
         });
+        if (error) throw error;
 
         
         const {data:urlData}= supabase.storage.from(bucket).getPublicUrl(filePath);

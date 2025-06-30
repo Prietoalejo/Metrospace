@@ -110,7 +110,6 @@ function PerfilAdmin() {
 
       {/* CONTENIDO CENTRAL DEL PERFIL */}
       <div style={{ maxWidth: 1100, margin: "40px auto 0 auto" }}>
-        {/* Breadcrumb */}
         <div style={{ color: "#888", fontSize: 16, marginBottom: 16 }}>
           Inicio <span style={{ color: "#222" }}>{' > '}</span> <b>Mi perfil</b>
         </div>

@@ -103,35 +103,6 @@ function MisReservas() {
         </div>
       </header>
 
-      {/* Breadcrumb */}
-      <div style={{ maxWidth: 1100, margin: "32px auto 0 auto", width: "100%" }}>
-        <div
-          style={{
-            color: "#888",
-            fontSize: 16,
-            marginBottom: 0,
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
-            Inicio
-          </span>
-          <span style={{ color: "#222" }}>{">"}</span>
-          <b style={{ color: "#222" }}>Mis reservas</b>
-        </div>
-        <div
-          style={{
-            width: "100%",
-            height: 2,
-            background: "#2196f3",
-            margin: "8px 0 24px 0",
-            borderRadius: 2,
-          }}
-        />
-      </div>
-
       {/* Filtros y acciones */}
       <div
         style={{

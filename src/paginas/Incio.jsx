@@ -1,11 +1,13 @@
 import React from "react";
 import HeaderNavigation from "../componetes/HeaderNavigation";
+import Breadcrumbs from "../componetes/Breadcrumbs";
 import "../estilos/style.css";
 
 function Inicio() {
   return (
     <div className="landing">
       <HeaderNavigation variant="home" />
+      <Breadcrumbs />
 
       <div className="banner">
         <h1 className="hero-title">¿Necesitas un espacio para tu próximo evento?</h1>
