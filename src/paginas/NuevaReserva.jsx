@@ -12,14 +12,6 @@ const espaciosEjemplo = [
 		imagen: "https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
 	},
 	{
-		id: 2,
-		nombre: "Salones del A1",
-		capacidad: 40,
-		tipo: "Salón",
-		ubicacion: "A1",
-		imagen: "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=400&q=80",
-	},
-	{
 		id: 3,
 		nombre: "Laboratorios",
 		capacidad: 30,
@@ -29,7 +21,7 @@ const espaciosEjemplo = [
 	},
 	{
 		id: 4,
-		nombre: "Salones del EMG",
+		nombre: "Eugenio Mendoza",
 		capacidad: 35,
 		tipo: "Salón",
 		ubicacion: "EMG",
@@ -45,11 +37,11 @@ const espaciosEjemplo = [
 	},
 	{
 		id: 6,
-		nombre: "Salones del A2",
+		nombre: "Salones",
 		capacidad: 40,
 		tipo: "Salón",
-		ubicacion: "A2",
-		imagen: "https://images.unsplash.com/photo-1511453672303-1d7b7af2c9b2?auto=format&fit=crop&w=400&q=80",
+		ubicacion: "Edificio Principal",
+		imagen: "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=400&q=80",
 	},
 ];
 
@@ -110,34 +102,44 @@ function NuevaReserva() {
 					<button onClick={limpiarFiltros} className="nav-button" style={{ background: "none", border: "none", color: "#757575", cursor: "pointer" }}>Quitar filtros</button>
 				</div>
 				<div className="carrusel" style={{ flexWrap: "wrap", gap: 24 }}>
-					{filtrarEspacios().map((espacio) => (
-						<div
-							key={espacio.id}
-							className="div-2"
-							style={{
-								background: "#fff",
-								borderRadius: 16,
-								boxShadow: "0 2px 8px #0001",
-								display: "flex",
-								alignItems: "center",
-								width: 480,
-								marginBottom: 16,
-								cursor: "pointer",
-								transition: "box-shadow 0.2s",
-							}}
-							onClick={() => navigate(`/nueva-reserva/${espacio.id}`)}
-						>
-							<img src={espacio.imagen} alt={espacio.nombre} className="img" style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 12, margin: 16 }} />
-							<div style={{ flex: 1 }}>
-								<div className="text-wrapper-3" style={{ fontWeight: 600, fontSize: 18 }}>{espacio.nombre}</div>
-								<div style={{ color: "#757575", fontSize: 14, margin: "4px 0" }}>
-									{espacio.capacidad ? `Capacidad para ${espacio.capacidad} personas` : null}
+					{filtrarEspacios().length === 0 ? (
+						<div style={{ color: '#888', fontStyle: 'italic' }}>No hay espacios disponibles con los filtros actuales.</div>
+					) : (
+						filtrarEspacios().map((espacio) => (
+							<div
+								key={espacio.id}
+								className="div-2"
+								style={{
+									background: "#fff",
+									borderRadius: 16,
+									boxShadow: "0 2px 8px #0001",
+									display: "flex",
+									alignItems: "center",
+									width: 480,
+									marginBottom: 16,
+									cursor: "pointer",
+									transition: "box-shadow 0.2s",
+								}}
+								onClick={() => {
+									if (espacio.nombre === "Salones") {
+										navigate("/nueva-reserva/salones");
+									} else {
+										navigate(`/nueva-reserva/${espacio.id}`);
+									}
+								}}
+							>
+								<img src={espacio.imagen} alt={espacio.nombre} className="img" style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 12, margin: 16 }} />
+								<div style={{ flex: 1 }}>
+									<div className="text-wrapper-3" style={{ fontWeight: 600, fontSize: 18 }}>{espacio.nombre}</div>
+									<div style={{ color: "#757575", fontSize: 14, margin: "4px 0" }}>
+										{espacio.capacidad ? `Capacidad para ${espacio.capacidad} personas` : null}
+									</div>
+									<div style={{ color: "#757575", fontSize: 14 }}>{espacio.tipo}</div>
 								</div>
-								<div style={{ color: "#757575", fontSize: 14 }}>{espacio.tipo}</div>
+								<div style={{ marginRight: 24, fontSize: 28, color: "#BDBDBD" }}>&#8250;</div>
 							</div>
-							<div style={{ marginRight: 24, fontSize: 28, color: "#BDBDBD" }}>&#8250;</div>
-						</div>
-					))}
+						))
+					)}
 				</div>
 			</main>
 			<footer className="footer">

@@ -42,6 +42,30 @@ const espaciosEjemplo = [
     imagen: "https://via.placeholder.com/120x90",
     comentarios: [],
   },
+  // Salón de A1 para pruebas
+  {
+    id: "A1-208",
+    nombre: "A1-208",
+    capacidad: 200,
+    calificacion: 5,
+    subtotal: 120,
+    impuesto: 19.2,
+    total: 139.2,
+    imagen: "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=400&q=80",
+    comentarios: [],
+  },
+  // Salón de A2 para pruebas
+  {
+    id: "A2-101",
+    nombre: "A2-101",
+    capacidad: 120,
+    calificacion: 4,
+    subtotal: 90,
+    impuesto: 14.4,
+    total: 104.4,
+    imagen: "https://images.unsplash.com/photo-1511453672303-1d7b7af2c9b2?auto=format&fit=crop&w=400&q=80",
+    comentarios: [],
+  },
 ];
 
 const DetallesReserva = ({ espacio }) => {

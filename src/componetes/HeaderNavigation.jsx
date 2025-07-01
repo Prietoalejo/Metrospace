@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexto/AuthContext";
 
-function HeaderNavigation({ variant = "home" }) {
+function HeaderNavigation() {
     const navigate = useNavigate();
     const { currentUser, logout } = useAuth();
 
@@ -53,44 +53,6 @@ function HeaderNavigation({ variant = "home" }) {
                 {currentUser ? (
                     // Usuario autenticado
                     <>
-                        {variant === "home" && (
-                            <button
-                                className="nav-button"
-                                style={{
-                                    background: "#273b80",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: 8,
-                                    padding: "10px 20px",
-                                    fontWeight: 600,
-                                    fontSize: 14,
-                                    cursor: "pointer",
-                                }}
-                                onClick={() => navigate("/dashboard")}
-                            >
-                                Dashboard
-                            </button>
-                        )}
-
-                        {variant === "dashboard" && (
-                            <button
-                                className="nav-button"
-                                style={{
-                                    background: "#273b80",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: 8,
-                                    padding: "10px 20px",
-                                    fontWeight: 600,
-                                    fontSize: 14,
-                                    cursor: "pointer",
-                                }}
-                                onClick={() => navigate("/")}
-                            >
-                                Inicio
-                            </button>
-                        )}
-
                         <button
                             className="nav-button"
                             style={{
@@ -203,4 +165,4 @@ function HeaderNavigation({ variant = "home" }) {
     );
 }
 
-export default HeaderNavigation; 
+export default HeaderNavigation;

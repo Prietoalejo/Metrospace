@@ -8,12 +8,12 @@ import Inicio from "./paginas/Incio";
 import Registro from "./paginas/Registro";
 import IniciarSesion from "./paginas/IniciarSesion";
 import { AuthProvider } from "./contexto/AuthContext";
-import { uploadImage } from "../supabaseCredentials.js";
 
 import PerfilAdmin from "./paginas/PerfilAdmin";
 import Reportes from "./paginas/Reportes";
 import NuevaReservaCompleta from "./paginas/NuevaReservaCompleta";
 import NuevaReserva from "./paginas/NuevaReserva";
+import NuevaReservaSalones from "./paginas/NuevaReservaSalones";
 
 function App() {
   return (
@@ -64,6 +64,22 @@ function App() {
             element={
               <RutaProtegida>
                 <NuevaReservaCompleta />
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/nueva-reserva-completa/:id"
+            element={
+              <RutaProtegida>
+                <NuevaReservaCompleta />
+              </RutaProtegida>
+            }
+          />
+          <Route
+            path="/nueva-reserva/salones"
+            element={
+              <RutaProtegida>
+                <NuevaReservaSalones />
               </RutaProtegida>
             }
           />
