@@ -14,6 +14,10 @@ import Reportes from "./paginas/Reportes";
 import NuevaReservaCompleta from "./paginas/NuevaReservaCompleta";
 import NuevaReserva from "./paginas/NuevaReserva";
 import NuevaReservaSalones from "./paginas/NuevaReservaSalones";
+import Espacios from "./paginas/Espacios";
+import CrearEspacio from "./paginas/CrearEspacio"; // Importar la nueva página
+import VerReportes from "./paginas/VerReportes";
+import EditarPerfilEspacio from "./paginas/EditarPerfilEspacio";
 
 function App() {
   return (
@@ -83,6 +87,10 @@ function App() {
               </RutaProtegida>
             }
           />
+          <Route path="/espacios" element={<Espacios />} />
+          <Route path="/crear-espacio" element={<CrearEspacio />} /> {/* Nueva ruta */}
+          <Route path="/ver-reportes" element={<VerReportes />} />
+          <Route path="/editar-espacio/:nombre" element={<EditarPerfilEspacio />} />
         </Routes>
       </Router>
     </AuthProvider>

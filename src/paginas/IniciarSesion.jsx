@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { auth, signInWithGoogle } from "../firebase"; // Ajusta la ruta si es necesario
+import { auth, signInWithGoogle } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
 import "../estilos/style.css";
 
 function IniciarSesion() {
@@ -15,8 +16,18 @@ function IniciarSesion() {
     e.preventDefault();
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/");
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      // Consultar Firestore para saber si es admin
+      const db = getFirestore();
+      const userDocRef = doc(db, "usuarios", user.uid);
+      const userDoc = await getDoc(userDocRef);
+      const userData = userDoc.data();
+      if (userData && userData.categoria === "Administrador") {
+        navigate("/reportes");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       alert(`Error al iniciar sesión: ${error.message}`);
     } finally {

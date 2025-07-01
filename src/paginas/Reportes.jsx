@@ -161,6 +161,7 @@ function Reportes() {
 					}}
 				>
 					<button
+						onClick={() => window.location.href = "/ver-reportes"}
 						style={{
 							background: "#222",
 							color: "#fff",
@@ -194,6 +195,7 @@ function Reportes() {
 							alignItems: "center",
 							gap: 8,
 						}}
+						onClick={() => (window.location.href = "/espacios")}
 					>
 						Ver espacios
 						<span role="img" aria-label="spaces" style={{ fontSize: 18 }}>
