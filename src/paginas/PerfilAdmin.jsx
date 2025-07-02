@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
+import Breadcrumbs from "../componetes/Breadcrumbs";
 
 function PerfilAdmin() {
   // Datos de ejemplo
@@ -107,12 +108,11 @@ function PerfilAdmin() {
           </button>
         </div>
       </header>
+      <Breadcrumbs />
 
       {/* CONTENIDO CENTRAL DEL PERFIL */}
       <div style={{ maxWidth: 1100, margin: "40px auto 0 auto" }}>
-        <div style={{ color: "#888", fontSize: 16, marginBottom: 16 }}>
-          Inicio <span style={{ color: "#222" }}>{' > '}</span> <b>Mi perfil</b>
-        </div>
+        {/* Breadcrumbs eliminados aquí */}
 
         {/* Banner superior */}
         <div style={{

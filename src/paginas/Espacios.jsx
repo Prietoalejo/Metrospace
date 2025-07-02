@@ -145,6 +145,7 @@ const Espacios = () => {
 					</button>
 				</div>
 			</header>
+			<Breadcrumbs />
 			<div
 				style={{
 					maxWidth: 1200,
@@ -154,7 +155,6 @@ const Espacios = () => {
 					flex: 1,
 				}}
 			>
-				<Breadcrumbs />
 				<h2
 					style={{
 						color: "#BDBDBD",

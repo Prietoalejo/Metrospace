@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../estilos/style.css";
 import { useNavigate } from "react-router-dom";
+import Breadcrumbs from "../componetes/Breadcrumbs";
 
 const espaciosEjemplo = [
 	{
@@ -72,9 +73,10 @@ function NuevaReserva() {
 	};
 
 	return (
-		<div className="landing">
-			{/* Header reutilizable */}
-			<header className="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', height: 100, background: '#fff', borderBottom: '4px solid #f78628', boxSizing: 'border-box', position: 'relative', zIndex: 4 }}>
+		<div className="landing" style={{ minHeight: "100vh", background: "#fff" }}>
+			<header
+				style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 40px", height: 100, background: "#fff", borderBottom: "4px solid #f78628", boxSizing: "border-box", position: "relative", zIndex: 4 }}
+			>
 				{/* Logo o espacio gris */}
 				<div style={{ width: 48, height: 48, background: '#e0e0e0', borderRadius: 8, marginRight: 24 }}></div>
 				<div style={{ fontWeight: 700, fontSize: 32, color: '#f78628', letterSpacing: -1.2 }}>METROSPACE</div>
@@ -83,11 +85,8 @@ function NuevaReserva() {
 					<button className="nav-button" style={{ background: '#fff', border: '1px solid #f78628', color: '#f78628', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>Mi perfil</button>
 				</div>
 			</header>
+			<Breadcrumbs />
 			<main className="container">
-				<div style={{ marginBottom: 16 }}>
-					<span style={{ color: "#BDBDBD" }}>Inicio &gt; Mis reservas &gt; </span>
-					<span style={{ fontWeight: "bold" }}>Nueva reserva</span>
-				</div>
 				<h2 className="text-wrapper-2" style={{ marginBottom: 16 }}>Espacios disponibles</h2>
 				<div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
 					<select value={tipo} onChange={e => setTipo(e.target.value)}>

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import "../estilos/style.css";
 import Header from "../componetes/HeaderNavigation";
 import Footer from "../componetes/Footer";
+import Breadcrumbs from "../componetes/Breadcrumbs";
 
 const espaciosEjemplo = [
   {
@@ -173,6 +174,7 @@ const NuevaReservaCompleta = () => {
   return (
     <div className="landing">
       <Header />
+      <Breadcrumbs />
       <main className="container">
         <div style={{ fontWeight: 600, fontSize: 20, marginBottom: 24, color: '#222' }}>Completa la información</div>
         {/* Mostrar detalles del espacio seleccionado */}

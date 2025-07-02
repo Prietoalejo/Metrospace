@@ -97,8 +97,8 @@ const CrearEspacio = () => {
 					</button>
 				</div>
 			</header>
+      <Breadcrumbs />
       <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%", padding: "0 20px", flex: 1 }}>
-        <Breadcrumbs crumbs={["Inicio", "Ver espacios", "Crear nuevo espacio"]} />
         <h2 style={{ fontWeight: 500, fontSize: 24, margin: "32px 0 0 0" }}>Completa los datos</h2>
         
         <div style={{ display: "flex", gap: 32, marginTop: 24 }}>

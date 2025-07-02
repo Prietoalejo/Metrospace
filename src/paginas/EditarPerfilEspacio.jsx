@@ -19,8 +19,8 @@ const EditarPerfilEspacio = () => {
           Mi perfil <span style={{ width: 28, height: 28, borderRadius: "50%", background: "#e0e0e0", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: "#888", marginLeft: 8 }}>👤</span>
         </button>
       </header>
+      <Breadcrumbs />
       <div style={{ maxWidth: 1200, margin: "0 auto", width: "100%", padding: "0 20px", flex: 1 }}>
-        <Breadcrumbs crumbs={["Inicio", "Ver espacios", <b>Auditorio Pensairi</b>]} />
         <div style={{ display: "flex", marginTop: 32, gap: 40 }}>
           <div style={{ flex: 1 }}>
             <h2 style={{ fontWeight: 500, fontSize: 22, marginBottom: 24 }}>Datos del espacio</h2>

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
+import Breadcrumbs from "../componetes/Breadcrumbs";
 
 function MisReservas() {
   const navigate = useNavigate();
@@ -102,6 +103,7 @@ function MisReservas() {
           </button>
         </div>
       </header>
+      <Breadcrumbs />
 
       {/* Filtros y acciones */}
       <div

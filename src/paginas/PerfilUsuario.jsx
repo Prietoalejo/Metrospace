@@ -7,6 +7,7 @@ import { getAuth } from "firebase/auth";
 import { uploadImage } from "../../supabaseCredentials";
 import { app } from "../firebase";
 import { doc, updateDoc } from "firebase/firestore";
+import Breadcrumbs from "../componetes/Breadcrumbs";
 
 
 const db = getFirestore(app);
@@ -215,14 +216,9 @@ function PerfilUsuario() {
           </button>
         </div>
       </header>
-
-
+      <Breadcrumbs />
       {/* CONTENIDO CENTRAL DEL PERFIL */}
       <div style={{ maxWidth: 1100, margin: "40px auto 0 auto" }}>
-        <div style={{ color: "#888", fontSize: 16, marginBottom: 16 }}>
-          Inicio <span style={{ color: "#222" }}>{' > '}</span> <b>Mi perfil</b>
-        </div>
-
 
         {/* Banner superior */}
         <div style={{

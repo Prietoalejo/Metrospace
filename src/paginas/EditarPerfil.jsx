@@ -5,6 +5,7 @@ import { getFirestore, doc, updateDoc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { app } from "../firebase";
 import HeaderNavigation from "../componetes/HeaderNavigation";
+import Breadcrumbs from "../componetes/Breadcrumbs";
 import "../estilos/style.css";
 
 const db = getFirestore(app);
@@ -126,27 +127,8 @@ function EditarPerfil() {
     return (
         <div className="landing" style={{ background: "#f7f7f7", minHeight: "100vh" }}>
             <HeaderNavigation variant="dashboard" />
-
+            <Breadcrumbs />
             <div style={{ maxWidth: 800, margin: "40px auto", padding: "0 20px" }}>
-                {/* Breadcrumb */}
-                <div style={{ color: "#888", fontSize: 16, marginBottom: 24 }}>
-                    <span
-                        style={{ cursor: "pointer", color: "#f78628" }}
-                        onClick={() => navigate("/")}
-                    >
-                        Inicio
-                    </span>
-                    {' > '}
-                    <span
-                        style={{ cursor: "pointer", color: "#f78628" }}
-                        onClick={() => navigate("/perfil")}
-                    >
-                        Mi perfil
-                    </span>
-                    {' > '}
-                    <b>Editar perfil</b>
-                </div>
-
                 {/* Formulario de edición */}
                 <div style={{
                     background: "#fff",
