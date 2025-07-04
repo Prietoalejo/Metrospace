@@ -521,4 +521,148 @@ function Reportes() {
 	);
 }
 
+
+function Reportes() {
+  //estado
+  const [allReports, setAllReports] = useState([]); //reportes sin filtrar
+  const [filteredReports, setFilteredReports] = useState([]); //resportes despues de filtros
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  //valores de filtros
+  const [searchTerm, setSearchTerm] = useState("");
+  const [reportType, setReportsType] = useState("");
+  const [startDate, setStartDate] = useState(''); 
+  const [endDate, setEndDate] = useState('');  
+  
+  //cargar reportes
+useEffect(() => {
+    const fetchReports = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, error } = await supabase
+          .from('reports') 
+          .select('*'); // Selecciona todas las columnas
+
+        if (error) throw error;
+        setAllReports(data);
+        setFilteredReports(data); // Inicialmente, los reportes filtrados son todos los reportes
+      } catch (err) {
+        console.error('Error fetching reports:', err.message);
+        setError('No se pudieron cargar los reportes. Inténtalo de nuevo más tarde.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchReports();
+  }, []); // hace se ejecuta solo una vez 
+
+  //aplicar filtros cada vez que cambien
+  useEffect(() => {
+    let tempReports = [...allReports]; // Siempre empieza con una copia de TODOS los reportes
+
+    // 1 búsqueda de texto (ej. en el campo 'title' o 'description' del reporte)
+    if (searchTerm) {
+      tempReports = tempReports.filter(report =>
+        report.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        report.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // 2 tipo de reporte
+    if (reportType) {
+      tempReports = tempReports.filter(report => report.type === reportType);
+    }
+
+    // 3rango de fechas 
+    if (startDate) {
+      tempReports = tempReports.filter(report => report.date >= startDate);
+    }
+    if (endDate) {
+      tempReports = tempReports.filter(report => report.date <= endDate);
+    }
+
+    // Actualiza el estado de los reportes filtrados
+    setFilteredReports(tempReports);
+
+  }, [searchTerm, reportType, startDate, endDate, allReports]); // Dependencias: re-ejecutar cuando cambia alguno de estos estados
+
+  //mostrar 
+  return (
+    <div className="reports-container">
+      <h1>Reportes</h1>
+
+      {/* --- Controles de Filtro --- */}
+      <div className="filters-section" style={{ marginBottom: '20px', border: '1px solid #ccc', padding: '15px', borderRadius: '8px' }}>
+        <h3>Filtros</h3>
+        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+          {/* Input de búsqueda */}
+          <input
+            type="text"
+            placeholder="Buscar por título o descripción..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
+          />
+
+          {/* Select para tipo de reporte */}
+          <select
+            value={reportType}
+            onChange={(e) => setReportType(e.target.value)}
+            style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
+          >
+            <option value="">Todos los tipos</option>
+            <option value="ventas">Ventas</option>
+            <option value="gastos">Gastos</option>
+            <option value="inventario">Inventario</option>
+            {/* Agrega más opciones según tus tipos de reporte */}
+          </select>
+
+          {/* Filtro por fecha de inicio */}
+          <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            Fecha Inicio:
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
+            />
+          </label>
+
+          {/* Filtro por fecha de fin */}
+          <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            Fecha Fin:
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ddd' }}
+            />
+          </label>
+        </div>
+      </div>
+
+      {/* --- Mostrar Reportes --- */}
+      {loading && <p>Cargando reportes...</p>}
+      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
+      {!loading && !error && filteredReports.length === 0 && (
+        <p>No se encontraron reportes con los filtros aplicados.</p>
+      )}
+
+      <div className="reports-list">
+        {!loading && !error && filteredReports.map(report => (
+          <div key={report.id} className="report-item" style={{ border: '1px solid #eee', padding: '10px', marginBottom: '10px', borderRadius: '4px' }}>
+            <h3>{report.title} ({report.type})</h3>
+            <p>Fecha: {report.date}</p>
+            <p>{report.description}</p>
+            {/* Agrega más detalles del reporte aquí */}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default Reportes;
