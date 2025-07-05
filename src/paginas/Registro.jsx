@@ -176,11 +176,13 @@ function Registro() {
         style={{
           height: "1024px",
           width: "934px",
-          background: "#e0e0e0",
           background: `url(${image}) center center/cover no-repeat`,
           position: "absolute",
           left: 0,
           top: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
         }}
       >
         {/* Aquí irá la imagen de fondo */}
@@ -189,10 +191,8 @@ function Registro() {
             color: "#fff",
             fontSize: 48,
             fontWeight: "bold",
-            position: "absolute",
-            left: 80,
-            top: 400,
             textShadow: "2px 2px 8px #000",
+          
           }}
         >
           METROSPACE
