@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore"; // Añadir Firestore
 import "../estilos/style.css";
+import image from "../assets/image.png";
+
 
 
 function Registro() {
@@ -175,6 +177,7 @@ function Registro() {
           height: "1024px",
           width: "934px",
           background: "#e0e0e0",
+          background: `url(${image}) center center/cover no-repeat`,
           position: "absolute",
           left: 0,
           top: 0,

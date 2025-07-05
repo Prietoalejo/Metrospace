@@ -3,6 +3,7 @@ import { auth, signInWithGoogle } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import image from "../assets/image.png";
 import "../estilos/style.css";
 
 function IniciarSesion() {
@@ -59,7 +60,7 @@ function IniciarSesion() {
         style={{
           height: "1024px",
           width: "934px",
-          background: "#e0e0e0", //poner aquí un `url('path/to/image.jpg')`
+          background: `url(${image}) center center/cover no-repeat`,
           position: "absolute",
           left: 0,
           top: 0,
