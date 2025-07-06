@@ -129,11 +129,11 @@ function HeaderNavigation() {
                         <button
                             className="button-instance"
                             style={{
-                                background: "#f78628",
-                                color: "#fff",
-                                border: "none",
+                                background: "transparent",
+                                color: "#273b80",
+                                border: "2px solid #273b80",
                                 borderRadius: 8,
-                                padding: "10px 20px",
+                                padding: "8px 16px",
                                 fontWeight: 600,
                                 fontSize: 14,
                                 cursor: "pointer",
@@ -145,14 +145,15 @@ function HeaderNavigation() {
                         <button
                             className="design-component-instance-node"
                             style={{
-                                background: "transparent",
-                                color: "#273b80",
-                                border: "2px solid #273b80",
+                                background: "#f78628",
+                                color: "#fff",
+                                border: "none",
                                 borderRadius: 8,
-                                padding: "8px 16px",
+                                padding: "10px 20px",
                                 fontWeight: 600,
                                 fontSize: 14,
                                 cursor: "pointer",
+
                             }}
                             onClick={() => navigate("/iniciar-sesion")}
                         >

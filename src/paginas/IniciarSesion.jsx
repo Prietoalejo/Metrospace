@@ -59,7 +59,11 @@ function IniciarSesion() {
         style={{
           height: "1024px",
           width: "934px",
-          background: "#e0e0e0", //poner aquí un `url('path/to/image.jpg')`
+          backgroundImage: `url('https://univnoticias.com/wp-content/uploads/2021/03/Universidad-Metropolitana-Unimet-1024x684.jpg')`, 
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          backgroundColor: "rgb(224, 224, 224)", 
           position: "absolute",
           left: 0,
           top: 0,
@@ -74,6 +78,8 @@ function IniciarSesion() {
             fontSize: 48,
             fontWeight: "bold",
             textShadow: "2px 2px 8px #000",
+            fontFamily: "Roboto Condensed-Bold, Helvetica",
+             letterSpacing: "-3%",
           }}
         >
           METROSPACE
