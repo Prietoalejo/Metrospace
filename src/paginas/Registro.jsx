@@ -232,6 +232,7 @@ function Registro() {
               border: "none",
               padding: 10,
               borderRadius: 6,
+              color: "#767676",
             }}
             onClick={() => setPaso(1)}
           >
