@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexto/AuthContext";
+import Logo from '../assets/logo.png';
 
 function HeaderNavigation() {
     const navigate = useNavigate();
@@ -32,7 +33,16 @@ function HeaderNavigation() {
                 style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
                 onClick={() => navigate("/")}
             >
-                <div className="logo" style={{ width: 27, height: 48, background: "#eee", borderRadius: 4 }} />
+                <img
+                            src={Logo} 
+                            alt="Logo de Metrospace" 
+                            style={{
+                              width: 48,
+                              height: 48,
+                              marginRight: 24,
+                              objectFit: "contain",
+                            }}  
+                />
                 <div
                     className="div"
                     style={{
@@ -146,8 +156,8 @@ function HeaderNavigation() {
                         <button
                             className="design-component-instance-node"
                             style={{
-                                background: "#ffff",
-                                color: "#222",
+                                background: "#f78628",
+                                color: "#fff",
                                 border: "none",
                                 borderRadius: 8,
                                 padding: "10px 20px",

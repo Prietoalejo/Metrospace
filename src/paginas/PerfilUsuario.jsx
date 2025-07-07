@@ -8,7 +8,7 @@ import { uploadImage } from "../../supabaseCredentials";
 import { app } from "../firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import Breadcrumbs from "../componetes/Breadcrumbs";
-
+import Logo from '../assets/logo.png';
 
 const db = getFirestore(app);
 const auth = getAuth(app);
@@ -131,15 +131,16 @@ function PerfilUsuario() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap : 20, flexDirection: "row" }}>
-          <div
-            className="logo"
-            style={{
-              width: 27,
-              height: 48,
-              background: "#e0e0e0",
-              borderRadius: 4,
-              marginRight: 24,
-            }}
+          {/* Logo*/}
+                     <img
+                      src={Logo} 
+                      alt="Logo de Metrospace" 
+                      style={{
+                        width: 48,
+                        height: 48,
+                        marginRight: 24,
+                        objectFit: "contain",
+                      }}
           />
           <div
             className="div"

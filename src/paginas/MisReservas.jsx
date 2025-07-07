@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
 import Breadcrumbs from "../componetes/Breadcrumbs";
+import Logo from '../assets/logo.png';
 
 function MisReservas() {
   const navigate = useNavigate();
@@ -33,14 +34,15 @@ function MisReservas() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center" }}>
-          {/* Logo gris */}
-          <div
+          {/* Logo*/}
+           <img
+            src={Logo} 
+            alt="Logo de Metrospace" 
             style={{
               width: 48,
               height: 48,
               marginRight: 24,
-              background: "#e0e0e0",
-              borderRadius: 8,
+              objectFit: "contain",
             }}
           />
           <div
