@@ -1,8 +1,11 @@
 import React from "react";
 import HeaderNavigation from "../componetes/HeaderNavigation";
 import "../estilos/style.css";
+import { useNavigate } from "react-router-dom";
 
 function Inicio() {
+  const navigate = useNavigate();
+
   return (
     <div className="landing">
       <HeaderNavigation variant="home" />
@@ -15,7 +18,9 @@ function Inicio() {
           que estudiantes, profesores, investigadores reserven espacios de
           manera rápida y segura.
         </p>
-        <button className="hero-button">Agendar espacios</button>
+        <button className="hero-button" onClick={() => navigate("/nueva-reserva")}>
+          Agendar espacios
+        </button>
       </div>
 
       <div className="panel">
