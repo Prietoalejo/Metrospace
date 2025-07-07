@@ -27,7 +27,7 @@ function MisReservas() {
           padding: "0 40px",
           height: 100,
           background: "#fff",
-          borderBottom: "4px solid #2196f3",
+          borderBottom: "4px solid #ffffff",
           boxSizing: "border-box",
           position: "relative",
           zIndex: 4,

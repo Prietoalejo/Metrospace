@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../estilos/style.css";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../componetes/Breadcrumbs";
+import Logo from '../assets/logo.png';
 
 const espaciosEjemplo = [
 	{
@@ -81,8 +82,8 @@ function NuevaReserva() {
 				<div style={{ width: 48, height: 48, background: '#e0e0e0', borderRadius: 8, marginRight: 24 }}></div>
 				<div style={{ fontWeight: 700, fontSize: 32, color: '#f78628', letterSpacing: -1.2 }}>METROSPACE</div>
 				<div style={{ display: 'flex', gap: 16 }}>
-					<button className="nav-button" style={{ background: '#fff', border: '1px solid #f78628', color: '#f78628', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/reservas')}>Reservas</button>
-					<button className="nav-button" style={{ background: '#fff', border: '1px solid #f78628', color: '#f78628', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>Mi perfil</button>
+					<button className="nav-button" style={{ background: '#222', color: '#fff', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/reservas')}>Reservas</button>
+					<button className="nav-button" style={{ background: '#fff',border: "1px solid #ccc", color: '#222', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>Mi perfil</button>
 				</div>
 			</header>
 			<Breadcrumbs />
