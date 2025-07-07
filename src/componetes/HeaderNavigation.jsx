@@ -46,10 +46,10 @@ function HeaderNavigation() {
                 <div
                     className="div"
                     style={{
-                        marginLeft: 24,
+                        marginLeft: 70,
                         color: "#f78628",
-                        fontFamily: "Roboto Condensed-Bold, Helvetica",
-                        fontSize: 48,
+                        fontFamily: "Roboto Condensed, Helvetica, Arial, sans-serif",
+                        fontSize: 40,
                         fontWeight: 700,
                         letterSpacing: "-1.44px"
                     }}

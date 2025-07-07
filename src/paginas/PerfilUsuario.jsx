@@ -148,10 +148,11 @@ function PerfilUsuario() {
             style={{
               color: "#f78628",
               fontWeight: 700,
-              fontSize: 48,
+              fontSize: 40,
               letterSpacing: "-1.44px",
               fontFamily: "Roboto Condensed, Helvetica, Arial, sans-serif",
               whiteSpace: "nowrap",
+              marginLeft: 60, 
             }}
           >
             METROSPACE
