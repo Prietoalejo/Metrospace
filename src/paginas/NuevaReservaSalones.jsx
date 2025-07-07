@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../componetes/Breadcrumbs";
+import Logo from '../assets/logo.png';
 
 // Datos estáticos de secciones y salones
 const secciones = [
@@ -69,11 +70,20 @@ function NuevaReservaSalones() {
 	return (
 		<div className="landing" style={{ minHeight: "100vh", background: "#fff" }}>
 			<header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px', height: 80, background: '#fff', borderBottom: '1px solid #eee' }}>
-				<div style={{ width: 48, height: 48, background: '#e0e0e0', borderRadius: 8, marginRight: 24 }}></div>
-				<div style={{ fontWeight: 700, fontSize: 32, color: '#f78628', letterSpacing: -1.2 }}>METROSPACE</div>
+				<img
+					src={Logo} 
+					alt="Logo de Metrospace" 
+					style={{
+						width: 48,
+						height: 48,
+						marginRight: 24,
+						objectFit: "contain",
+					}} 
+					/>
+				<div style={{ fontWeight: 700, fontSize: 32, color: '#f78628', letterSpacing: -1.2, marginLeft: 80 }}>METROSPACE</div>
 				<div style={{ display: 'flex', gap: 16 }}>
-					<button className="nav-button" style={{ background: '#222', border: '1px solid #f78628', color: '#fff', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/reservas')}>Reservas</button>
-					<button className="nav-button" style={{ background: '#fff', border: '1px solid #f78628', color: '#222', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>Mi perfil</button>
+					<button className="nav-button" style={{ background: '#222', color: '#fff', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/reservas')}>Reservas</button>
+					<button className="nav-button" style={{ background: '#fff', color: '#222', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>Mi perfil</button>
 				</div>
 			</header>
 			<Breadcrumbs />
