@@ -1,11 +1,51 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../firebase"; // Ajusta la ruta según tu configuración
+import { useAuth } from "../contexto/AuthContext"; // Ajusta según tu contexto de autenticación
 import "../estilos/style.css";
 import Breadcrumbs from "../componetes/Breadcrumbs";
-import Logo from '../assets/logo.png';
+
 
 function MisReservas() {
   const navigate = useNavigate();
+  const { currentUser } = useAuth(); // Obtener usuario actual
+  const [reservas, setReservas] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+
+  // Obtener reservas del usuario
+  useEffect(() => {
+    const fetchReservas = async () => {
+      if (!currentUser) return;
+     
+      setLoading(true);
+      try {
+        const q = query(
+          collection(db, "reservas"),
+          where("usuarioId", "==", currentUser.uid)
+        );
+       
+        const querySnapshot = await getDocs(q);
+        const reservasData = [];
+       
+        querySnapshot.forEach((doc) => {
+          reservasData.push({ id: doc.id, ...doc.data() });
+        });
+
+
+        setReservas(reservasData);
+      } catch (error) {
+        console.error("Error fetching reservas:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+
+    fetchReservas();
+  }, [currentUser]);
+
 
   return (
     <div
@@ -23,40 +63,27 @@ function MisReservas() {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between", // Mantiene el espacio entre los elementos
+          justifyContent: "space-between",
           padding: "0 40px",
           height: 100,
           background: "#fff",
-          borderBottom: "4px solid #ffffff",
+          borderBottom: "4px solid #2196f3",
           boxSizing: "border-box",
           position: "relative",
           zIndex: 4,
         }}
       >
-        {/* Sección Izquierda: Logo */}
         <div style={{ display: "flex", alignItems: "center" }}>
-          <img
-            src={Logo} 
-            alt="Logo de Metrospace" 
+          {/* Logo gris */}
+          <div
             style={{
               width: 48,
               height: 48,
               marginRight: 24,
-              objectFit: "contain",
-            }} 
+              background: "#e0e0e0",
+              borderRadius: 8,
+            }}
           />
-        </div>
-
-        <div
-          style={{
-            flex: 1, 
-            display: "flex",
-            justifyContent: "center", // Centra el contenido horizontalmente
-            alignItems: "center",
-            minWidth: 0, // Previene el desbordamiento en pantallas pequeñas
-            marginLeft: 200 // Empuja el logo a la derecha
-          }}
-        >
           <div
             style={{
               color: "#f78628",
@@ -71,8 +98,6 @@ function MisReservas() {
             METROSPACE
           </div>
         </div>
-
-        {/* Sección Derecha: Botones */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button
             style={{
@@ -84,7 +109,7 @@ function MisReservas() {
               fontWeight: 700,
               fontSize: 16,
               cursor: "pointer",
-              marginRight: 8, // Mantiene la separación entre los botones
+              marginRight: 8,
             }}
             onClick={() => navigate("/reservas")}
           >
@@ -95,7 +120,7 @@ function MisReservas() {
               background: "#fff",
               border: "1px solid #ccc",
               borderRadius: 8,
-              padding: "10px 20px",
+              padding: "8px 18px 8px 8px",
               display: "flex",
               alignItems: "center",
               gap: 8,
@@ -120,6 +145,7 @@ function MisReservas() {
         </div>
       </header>
       <Breadcrumbs />
+
 
       {/* Filtros y acciones */}
       <div
@@ -268,7 +294,8 @@ function MisReservas() {
         </div>
       </div>
 
-      {/* Tabla de reservas */}
+
+      {/* Cabecera de tabla */}
       <div
         style={{
           maxWidth: 1100,
@@ -378,29 +405,82 @@ function MisReservas() {
         </div>
       </div>
 
-      {/* Mensaje de sin reservas */}
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: "40px auto 0 auto",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: 120,
-        }}
-      >
-        <div
-          style={{
-            color: "#222",
-            fontSize: 20,
-            fontWeight: 400,
-            textAlign: "center",
-          }}
-        >
-          No tienes reservas activas
-        </div>
+
+      {/* Lista de reservas */}
+      <div style={{ maxWidth: 1100, margin: "0 auto", width: "100%" }}>
+        {loading ? (
+          <div style={{ textAlign: "center", padding: 40 }}>
+            Cargando reservas...
+          </div>
+        ) : reservas.length === 0 ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: 120,
+              marginTop: 40,
+            }}
+          >
+            <div
+              style={{
+                color: "#222",
+                fontSize: 20,
+                fontWeight: 400,
+                textAlign: "center",
+              }}
+            >
+              No tienes reservas activas
+            </div>
+          </div>
+        ) : (
+          reservas.map((reserva) => (
+            <div
+              key={reserva.id}
+              style={{
+                display: "flex",
+                gap: 20,
+                padding: "16px 0",
+                borderBottom: "1px solid #eee",
+                alignItems: "center",
+              }}
+            >
+              {/* Espacio */}
+              <div style={{ minWidth: 120, flex: 1 }}>{reserva.espacioTipo}</div>
+             
+              {/* Nombre (nombre) */}
+              <div style={{ minWidth: 150, flex: 1 }}>{reserva.espacioNombre}</div>
+             
+              {/* Fecha */}
+              <div style={{ minWidth: 150, flex: 1 }}>
+                {new Date(reserva.fecha).toLocaleDateString("es-ES")}
+              </div>
+             
+              {/* Hora */}
+              <div style={{ minWidth: 150, flex: 1 }}>
+                {reserva.horaInicio} - {reserva.horaFin}
+              </div>
+             
+              {/* Detalles */}
+              <div style={{ minWidth: 120, flex: 1 }}>
+                <button
+                  style={{
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    borderRadius: 8,
+                    padding: "8px 16px",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => navigate(`/reserva/${reserva.id}`)}
+                >
+                  Ver
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
+
 
       {/* Footer siempre abajo */}
       <footer
@@ -456,4 +536,9 @@ function MisReservas() {
   );
 }
 
+
 export default MisReservas;
+
+
+
+
