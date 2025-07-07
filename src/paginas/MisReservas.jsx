@@ -23,7 +23,7 @@ function MisReservas() {
         style={{
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "space-between", // Mantiene el espacio entre los elementos
           padding: "0 40px",
           height: 100,
           background: "#fff",
@@ -33,9 +33,9 @@ function MisReservas() {
           zIndex: 4,
         }}
       >
+        {/* Sección Izquierda: Logo */}
         <div style={{ display: "flex", alignItems: "center" }}>
-          {/* Logo*/}
-           <img
+          <img
             src={Logo} 
             alt="Logo de Metrospace" 
             style={{
@@ -43,8 +43,20 @@ function MisReservas() {
               height: 48,
               marginRight: 24,
               objectFit: "contain",
-            }}
+            }} 
           />
+        </div>
+
+        <div
+          style={{
+            flex: 1, 
+            display: "flex",
+            justifyContent: "center", // Centra el contenido horizontalmente
+            alignItems: "center",
+            minWidth: 0, // Previene el desbordamiento en pantallas pequeñas
+            marginLeft: 200 // Empuja el logo a la derecha
+          }}
+        >
           <div
             style={{
               color: "#f78628",
@@ -59,6 +71,8 @@ function MisReservas() {
             METROSPACE
           </div>
         </div>
+
+        {/* Sección Derecha: Botones */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           <button
             style={{
@@ -70,7 +84,7 @@ function MisReservas() {
               fontWeight: 700,
               fontSize: 16,
               cursor: "pointer",
-              marginRight: 8,
+              marginRight: 8, // Mantiene la separación entre los botones
             }}
             onClick={() => navigate("/reservas")}
           >

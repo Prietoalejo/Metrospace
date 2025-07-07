@@ -139,6 +139,7 @@ function PerfilUsuario() {
                         width: 48,
                         height: 48,
                         marginRight: 24,
+                        marginLeft: 15,
                         objectFit: "contain",
                       }}
           />
