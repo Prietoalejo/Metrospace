@@ -74,6 +74,7 @@ function HeaderNavigation() {
                             className="profile-button"
                             style={{
                                 background: "rgba(219, 132, 17, 0.05)",
+                                color: "#222",
                                 border: "1px solid #ccc",
                                 borderRadius: 8,
                                 padding: "6px 12px",
@@ -145,8 +146,8 @@ function HeaderNavigation() {
                         <button
                             className="design-component-instance-node"
                             style={{
-                                background: "#f78628",
-                                color: "#fff",
+                                background: "#ffff",
+                                color: "#222",
                                 border: "none",
                                 borderRadius: 8,
                                 padding: "10px 20px",

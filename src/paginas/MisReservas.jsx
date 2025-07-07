@@ -79,7 +79,7 @@ function MisReservas() {
               background: "#fff",
               border: "1px solid #ccc",
               borderRadius: 8,
-              padding: "8px 18px 8px 8px",
+              padding: "10px 20px",
               display: "flex",
               alignItems: "center",
               gap: 8,

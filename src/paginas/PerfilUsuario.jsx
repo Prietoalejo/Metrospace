@@ -130,7 +130,7 @@ function PerfilUsuario() {
           boxSizing: "border-box",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap : 24, flexDirection: "row" }}>
+        <div style={{ display: "flex", alignItems: "center", gap : 20, flexDirection: "row" }}>
           <div
             className="logo"
             style={{
@@ -155,7 +155,7 @@ function PerfilUsuario() {
             METROSPACE
           </div>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap : 24, flexDirection: "row", minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", flexDirection: "row", gap: 40 }}>
           <button
             className="button-instance"
             style={{
@@ -163,7 +163,7 @@ function PerfilUsuario() {
               color: "#fff",
               border: "none",
               borderRadius: 8,
-              padding: "10px 24px",
+              padding: "10px 20px",
               fontWeight: 600,
               fontSize: 16,
               cursor: "pointer",
@@ -175,13 +175,13 @@ function PerfilUsuario() {
           <button
             className="button-2"
             style={{
-              background: "rgba(219, 132, 17, 0.05)",
+              background: "#ffff",
+              color: "#222",
               border: "1px solid #ccc",
               borderRadius: 8,
-              padding: "8px 18px 8px 8px",
+              padding: "4px 10px 5px 8px",
               display: "flex",
               alignItems: "center",
-              gap: 8,
               fontSize: 16,
               fontWeight: 500,
               cursor: "pointer",
