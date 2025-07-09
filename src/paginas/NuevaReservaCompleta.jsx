@@ -1,73 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import "../estilos/style.css";
 import Header from "../componetes/HeaderNavigation";
 import Footer from "../componetes/Footer";
 import Breadcrumbs from "../componetes/Breadcrumbs";
 
-const espaciosEjemplo = [
-  {
-    id: 1,
-    nombre: "Sala de Juntas A",
-    capacidad: 10,
-    calificacion: 4,
-    subtotal: 100,
-    impuesto: 16,
-    total: 116,
-    imagen: "https://via.placeholder.com/120x90",
-    comentarios: [
-      {
-        id: 1,
-        usuario: "Juan Perez",
-        fecha: "2023-10-01",
-        estrellas: 5,
-        texto: "Excelente lugar para reuniones.",
-      },
-      {
-        id: 2,
-        usuario: "Maria Lopez",
-        fecha: "2023-10-02",
-        estrellas: 4,
-        texto: "Muy buen servicio, aunque la sala estaba un poco fría.",
-      },
-    ],
-  },
-  {
-    id: 2,
-    nombre: "Sala de Juntas B",
-    capacidad: 8,
-    calificacion: 3,
-    subtotal: 80,
-    impuesto: 12.8,
-    total: 92.8,
-    imagen: "https://via.placeholder.com/120x90",
-    comentarios: [],
-  },
-  // Salón de A1 para pruebas
-  {
-    id: "A1-208",
-    nombre: "A1-208",
-    capacidad: 200,
-    calificacion: 5,
-    subtotal: 120,
-    impuesto: 19.2,
-    total: 139.2,
-    imagen: "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=400&q=80",
-    comentarios: [],
-  },
-  // Salón de A2 para pruebas
-  {
-    id: "A2-101",
-    nombre: "A2-101",
-    capacidad: 120,
-    calificacion: 4,
-    subtotal: 90,
-    impuesto: 14.4,
-    total: 104.4,
-    imagen: "https://images.unsplash.com/photo-1511453672303-1d7b7af2c9b2?auto=format&fit=crop&w=400&q=80",
-    comentarios: [],
-  },
-];
+import { getEspacios } from "../logica/supabaseEspacios";
 
 const DetallesReserva = ({ espacio }) => {
   // Calcular promedio de estrellas
@@ -113,16 +51,22 @@ const FormularioReserva = () => (
     <div style={{ display: 'flex', gap: 24 }}>
       <div style={{ flex: 1 }}>
         <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Fecha</label>
-        <input type="date" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#222' }} />
+        <input type="date" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
       </div>
-      <div style={{ flex: 1 }}>
-        <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Horario</label>
-        <input type="text" placeholder="02:00 pm - 03:00 pm" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#222' }} />
+      <div style={{ flex: 1, display: 'flex', gap: 8, alignItems: 'end' }}>
+        <div style={{ flex: 'none' }}>
+          <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Hora inicio</label>
+          <input type="time" style={{ width: 90, padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
+        </div>
+        <div style={{ flex: 'none' }}>
+          <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Hora fin</label>
+          <input type="time" style={{ width: 90, padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
+        </div>
       </div>
     </div>
     <div style={{ width: '100%' }}>
       <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Requerimientos adicionales</label>
-      <input type="text" placeholder="ejem. equipos, material..." style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#222' }} />
+      <input type="text" placeholder="ejem. equipos, material..." style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
     </div>
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginTop: 8 }}>
       <div style={{ background: '#fff', borderRadius: 12, padding: 16, boxShadow: '0 2px 8px #0001', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -166,10 +110,30 @@ const Comentarios = ({ comentarios }) => (
   </div>
 );
 
+
 const NuevaReservaCompleta = () => {
   const { id } = useParams();
-  // Buscar el espacio seleccionado por id
-  const espacio = espaciosEjemplo.find(e => String(e.id) === String(id));
+  const [espacio, setEspacio] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchEspacio() {
+      setLoading(true);
+      try {
+        const espacios = await getEspacios();
+        const found = espacios.find(e => String(e.id) === String(id));
+        if (!found) throw new Error("Espacio no encontrado");
+        setEspacio(found);
+        setError(null);
+      } catch (err) {
+        setError("Error al cargar el espacio");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchEspacio();
+  }, [id]);
 
   return (
     <div className="landing">
@@ -177,12 +141,24 @@ const NuevaReservaCompleta = () => {
       <Breadcrumbs />
       <main className="container">
         <div style={{ fontWeight: 600, fontSize: 20, marginBottom: 24, color: '#222' }}>Completa la información</div>
-        {/* Mostrar detalles del espacio seleccionado */}
-        {espacio && (
-          <DetallesReserva espacio={espacio} />
+        {loading ? (
+          <div style={{ color: '#888', fontStyle: 'italic' }}>Cargando espacio...</div>
+        ) : error ? (
+          <div style={{ color: '#d32f2f', fontStyle: 'italic' }}>{error}</div>
+        ) : espacio && (
+          <>
+            <DetallesReserva espacio={{
+              ...espacio,
+              imagen: Array.isArray(espacio.imagenes) && espacio.imagenes.length > 0 ? espacio.imagenes[0] : (espacio.imagen || "https://via.placeholder.com/120x90?text=Sin+foto"),
+              comentarios: espacio.comentarios || [],
+              subtotal: espacio.precio || 0,
+              impuesto: (espacio.precio || 0) * 0.16,
+              total: (espacio.precio || 0) * 1.16,
+            }} />
+            <FormularioReserva />
+            <Comentarios comentarios={espacio.comentarios || []} />
+          </>
         )}
-        <FormularioReserva />
-        <Comentarios comentarios={espacio ? espacio.comentarios : []} />
       </main>
       <Footer />
     </div>
