@@ -1,9 +1,10 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Footer from "../componetes/Footer";
 import Breadcrumbs from "../componetes/Breadcrumbs";
 import { getEspacios, editarEspacio, eliminarEspacio } from "../logica/supabaseEspacios";
+import { subirImagenEspacio } from "../logica/supabaseUpload";
 import Modal from "../componetes/Modal";
 
 const EditarPerfilEspacio = () => {
@@ -18,6 +19,23 @@ const EditarPerfilEspacio = () => {
   const [saving, setSaving] = useState(false);
   const [originalEspacio, setOriginalEspacio] = useState(null);
   const [modalEliminar, setModalEliminar] = useState(false);
+  // Para nuevas imágenes
+  const [nuevasImagenes, setNuevasImagenes] = useState([]); // Archivos
+  const [nuevasImagenesPreview, setNuevasImagenesPreview] = useState([]); // URLs
+  const inputImagenesRef = useRef(null);
+  // Manejar selección de nuevas imágenes
+  // Manejar selección de nuevas imágenes (máx 3 en total)
+  const handleNuevasImagenesChange = (e) => {
+    let files = Array.from(e.target.files).filter(f => f.type.startsWith("image/"));
+    const maxNuevas = 3 - (Array.isArray(espacio?.imagenes) ? espacio.imagenes.length : 0);
+    if (files.length > maxNuevas) {
+      files = files.slice(0, maxNuevas);
+      alert(`Solo puedes agregar ${maxNuevas} imagen${maxNuevas === 1 ? '' : 'es'} más (máximo 3 en total).`);
+    }
+    setNuevasImagenes(files);
+    const previews = files.map(file => URL.createObjectURL(file));
+    setNuevasImagenesPreview(previews);
+  };
 
   useEffect(() => {
     async function fetchEspacio() {
@@ -109,15 +127,109 @@ const EditarPerfilEspacio = () => {
               />
             </div>
           </div>
-          <div style={{ flex: 2 }}>
-            <h3 style={{ fontWeight: 500, fontSize: 18, marginBottom: 16 }}>Fotos del espacio</h3>
-            <div style={{ display: "flex", gap: 32 }}>
-              {espacio?.imagen ? (
-                <img src={espacio.imagen} alt="foto espacio" style={{ width: 220, height: 180, objectFit: "cover", borderRadius: 8, boxShadow: "0 2px 8px #0001" }} />
-              ) : (
-                <div style={{ width: 220, height: 180, background: "#e0e0e0", borderRadius: 8, display: "flex", alignItems: "center", justifyContent: "center", color: "#bbb", fontSize: 32 }}>🖼️</div>
-              )}
+          <div style={{ flex: 2, display: "flex", flexDirection: "column", justifyContent: "center", height: "100%" }}>
+            <h3 style={{ fontWeight: 500, fontSize: 18, marginBottom: 16, textAlign: "center" }}>Fotos del espacio</h3>
+            <div style={{ display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "center", alignItems: "center", minHeight: 180 }}>
+              {/* Imágenes existentes */}
+              {/* Mostrar siempre 3 slots de imagen (existentes, nuevas o placeholder) */}
+              {[0,1,2].map((slotIdx) => {
+                // Imagen existente
+                if (Array.isArray(espacio?.imagenes) && espacio.imagenes[slotIdx]) {
+                  return (
+                    <div key={"existente-"+slotIdx} style={{ position: "relative" }}>
+                      <img
+                        src={espacio.imagenes[slotIdx]}
+                        alt={`foto espacio ${slotIdx + 1}`}
+                        style={{ width: 180, height: 140, objectFit: "cover", borderRadius: 12, boxShadow: "0 2px 8px #0001", border: "2px solid #fff" }}
+                      />
+                      {/* Botón de eliminar (solo visible en modo edición) */}
+                      {editando && (
+                        <button
+                          onClick={() => {
+                            setEspacio({
+                              ...espacio,
+                              imagenes: espacio.imagenes.filter((_, i) => i !== slotIdx)
+                            });
+                          }}
+                          style={{
+                            position: "absolute",
+                            top: 6,
+                            right: 6,
+                            background: "#fff",
+                            border: "1px solid #d32f2f",
+                            color: "#d32f2f",
+                            borderRadius: "50%",
+                            width: 28,
+                            height: 28,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontWeight: 700,
+                            fontSize: 18,
+                            cursor: "pointer",
+                            boxShadow: "0 1px 4px #0002"
+                          }}
+                          title="Eliminar imagen"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
+                  );
+                }
+                // Imagen nueva (preview)
+                if (editando && nuevasImagenesPreview[slotIdx - (espacio?.imagenes?.length || 0)]) {
+                  return (
+                    <div key={"nueva-"+slotIdx} style={{ position: "relative" }}>
+                      <img
+                        src={nuevasImagenesPreview[slotIdx - (espacio?.imagenes?.length || 0)]}
+                        alt={`nueva imagen ${slotIdx + 1}`}
+                        style={{ width: 180, height: 140, objectFit: "cover", borderRadius: 12, boxShadow: "0 2px 8px #0001", border: "2px solid #fff", opacity: 0.7 }}
+                      />
+                      <span style={{ position: "absolute", top: 6, left: 6, background: "#fff", color: "#888", borderRadius: 6, padding: "2px 8px", fontSize: 12 }}>Nueva</span>
+                    </div>
+                  );
+                }
+                // Placeholder
+                return (
+                  <div key={"placeholder-"+slotIdx} style={{ width: 180, height: 140, background: "#e0e0e0", borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", color: "#bbb", fontSize: 32 }}>🖼️</div>
+                );
+              })}
+              {/* Previews de nuevas imágenes (solo en edición) */}
+              {editando && nuevasImagenesPreview.length > 0 && nuevasImagenesPreview.map((url, idx) => (
+                <div key={"nueva-"+idx} style={{ position: "relative" }}>
+                  <img
+                    src={url}
+                    alt={`nueva imagen ${idx + 1}`}
+                    style={{ width: 180, height: 140, objectFit: "cover", borderRadius: 12, boxShadow: "0 2px 8px #0001", border: "2px solid #fff", opacity: 0.7 }}
+                  />
+                  <span style={{ position: "absolute", top: 6, left: 6, background: "#fff", color: "#888", borderRadius: 6, padding: "2px 8px", fontSize: 12 }}>Nueva</span>
+                </div>
+              ))}
             </div>
+            {/* Input para nuevas imágenes (solo en edición) */}
+            {editando && (
+              <div style={{ marginTop: 18 }}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  style={{ display: "none" }}
+                  ref={inputImagenesRef}
+                  onChange={handleNuevasImagenesChange}
+                  max={3 - (Array.isArray(espacio?.imagenes) ? espacio.imagenes.length : 0)}
+                  disabled={(Array.isArray(espacio?.imagenes) ? espacio.imagenes.length : 0) >= 3}
+                />
+                <button
+                  type="button"
+                  style={{ background: "#e0e0e0", border: "none", borderRadius: 8, padding: "8px 16px", cursor: (Array.isArray(espacio?.imagenes) ? espacio.imagenes.length : 0) >= 3 ? "not-allowed" : "pointer", color: "#000" }}
+                  onClick={() => inputImagenesRef.current && inputImagenesRef.current.click()}
+                  disabled={(Array.isArray(espacio?.imagenes) ? espacio.imagenes.length : 0) >= 3}
+                >
+                  {((Array.isArray(espacio?.imagenes) ? espacio.imagenes.length : 0) >= 3) ? "Máximo 3 imágenes alcanzado" : "Agregar nuevas imágenes"}
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center", gap: 32, marginTop: 40 }}>
@@ -161,17 +273,33 @@ const EditarPerfilEspacio = () => {
                   onClick={async () => {
                     setSaving(true);
                     try {
+                      // Subir nuevas imágenes si hay
+                      let nuevasUrls = [];
+                      if (nuevasImagenes.length > 0) {
+                        for (const file of nuevasImagenes) {
+                          const url = await subirImagenEspacio(file);
+                          nuevasUrls.push(url);
+                        }
+                      }
+                      // Combinar imágenes existentes (ya filtradas si eliminó alguna) + nuevas
+                      const imagenesFinal = [
+                        ...(Array.isArray(espacio.imagenes) ? espacio.imagenes : []),
+                        ...nuevasUrls
+                      ];
                       await editarEspacio(id, {
                         nombre: espacio.nombre,
                         tipo: espacio.tipo,
                         sub_tipo: espacio.sub_tipo,
                         capacidad: parseInt(espacio.capacidad, 10),
                         precio: parseInt(espacio.precio, 10),
-                        descripcion: espacio.descripcion
+                        descripcion: espacio.descripcion,
+                        imagenes: imagenesFinal
                       });
                       setEditando(false);
                       setConfirmar(false);
                       setModalOpen(true);
+                      setNuevasImagenes([]);
+                      setNuevasImagenesPreview([]);
                       setTimeout(() => {
                         setModalOpen(false);
                         navigate("/espacios");

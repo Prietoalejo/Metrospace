@@ -1,5 +1,6 @@
 
 import { supabase } from '../../supabaseCredentials';
+import { eliminarImagenEspacioPorUrl } from './supabaseDeleteImage';
 
 // Obtener todos los espacios
 export async function getEspacios() {
@@ -35,12 +36,28 @@ export async function editarEspacio(id, updates) {
 }
 
 // Eliminar un espacio
+// Elimina un espacio y sus imágenes del bucket
 export async function eliminarEspacio(id) {
+  // Obtener las imágenes antes de eliminar
+  const { data, error: fetchError } = await supabase
+    .from('espacio')
+    .select('imagenes')
+    .eq('id', id)
+    .single();
+  if (fetchError) throw fetchError;
+  const imagenes = Array.isArray(data?.imagenes) ? data.imagenes : [];
+
+  // Eliminar el espacio
   const { error } = await supabase
     .from('espacio')
     .delete()
     .eq('id', id);
   if (error) throw error;
+
+  // Eliminar imágenes del bucket (no bloquear si falla alguna)
+  for (const url of imagenes) {
+    await eliminarImagenEspacioPorUrl(url);
+  }
   return true;
 }
 

@@ -215,12 +215,14 @@ const Espacios = () => {
 									}}
 								>
 									<img
-										src={espacio.imagen}
+										src={espacio.imagenes && espacio.imagenes.length > 0 ? espacio.imagenes[0] : "https://via.placeholder.com/140x100?text=Sin+foto"}
 										alt={espacio.nombre}
 										style={{
 											width: 140,
 											height: 100,
 											objectFit: "cover",
+											borderRadius: 8,
+											background: "#eee"
 										}}
 									/>
 									<div
@@ -293,12 +295,14 @@ const Espacios = () => {
 									}}
 								>
 									<img
-										src={espacio.imagen}
+										src={espacio.imagenes && espacio.imagenes.length > 0 ? espacio.imagenes[0] : "https://via.placeholder.com/140x100?text=Sin+foto"}
 										alt={espacio.nombre}
 										style={{
 											width: 140,
 											height: 100,
 											objectFit: "cover",
+											borderRadius: 8,
+											background: "#eee"
 										}}
 									/>
 									<div
