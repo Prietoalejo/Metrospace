@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { auth, db } from '../firebase';
+import { auth, signInWithGoogle } from '../firebase';
+import { getUsuarioByCorreo, upsertUsuario } from '../logica/supabaseUsuario';
 import { signOut } from 'firebase/auth';
-import { getFirestore, doc, getDoc, setDoc } from "firebase/firestore";
-import { signInWithGoogle } from '../firebase';
 
 
 
@@ -22,38 +21,39 @@ export function AuthProvider({ children }) {
 
 
   useEffect(() => {
-  const unsubscribe = auth.onAuthStateChanged(async (user) => {
-    if (user) {
-      const db = getFirestore();
-      const userDocRef = doc(db, "usuarios", user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      // Si el usuario NO existe en Firestore, lo creamos
-      if (!userDoc.exists()) {
-        await setDoc(userDocRef, {
-          nombre: user.displayName || "",
-          apellido: "",
-          cedula: "",
-          telefono: "",
-          categoria: "Estudiante",
-          correo: user.email,
-          fechaRegistro: new Date()
-        });
+    const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      setCurrentUser(user || null);
+      if (user) {
+        // Buscar usuario en Supabase por correo
+        try {
+          let usuario = null;
+          try {
+            usuario = await getUsuarioByCorreo(user.email);
+          } catch (e) {
+            // Si no existe, lo creamos con los datos de Firebase
+            usuario = await upsertUsuario({
+              nombre: user.displayName || '',
+              apellido: '',
+              cedula: '',
+              correo: user.email,
+              telefono: '',
+              contrasena: null,
+              rol: 'usuario'
+            });
+            // Si upsertUsuario retorna array, toma el primer elemento
+            if (Array.isArray(usuario)) usuario = usuario[0];
+          }
+          setProfile(usuario);
+        } catch (e) {
+          setProfile(null);
+        }
+      } else {
+        setProfile(null);
       }
-
-      // Luego, actualiza el estado como siempre
-      const userData = (await getDoc(userDocRef)).data();
-      setCurrentUser({
-        ...user,
-        userData
-      });
-    } else {
-      setCurrentUser(null);
-    }
-    setLoading(false); 
-  });
-  return () => unsubscribe();
-}, []);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
 
   const logout = async () => {
@@ -71,12 +71,10 @@ export function AuthProvider({ children }) {
     currentUser,
     loading,
     logout,
-    db,
     googleLogin,
-    profile,     
+    profile,
     setProfile,
     setCurrentUser
-    
   };
 
 

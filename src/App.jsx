@@ -1,5 +1,6 @@
 import React from "react";
 import MisReservas from "./paginas/MisReservas";
+import EditarPerfil from "./paginas/EditarPerfil";
 import PerfilUsuario from "./paginas/PerfilUsuario";
 import DashboardUsuario from "./paginas/DashboardUsuario";
 import RutaProtegida from "./componetes/RutaProtegida";
@@ -8,14 +9,13 @@ import Inicio from "./paginas/Incio";
 import Registro from "./paginas/Registro";
 import IniciarSesion from "./paginas/IniciarSesion";
 import { AuthProvider } from "./contexto/AuthContext";
-
 import PerfilAdmin from "./paginas/PerfilAdmin";
 import Reportes from "./paginas/Reportes";
 import NuevaReservaCompleta from "./paginas/NuevaReservaCompleta";
 import NuevaReserva from "./paginas/NuevaReserva";
 import NuevaReservaSalones from "./paginas/NuevaReservaSalones";
 import Espacios from "./paginas/Espacios";
-import CrearEspacio from "./paginas/CrearEspacio"; // Importar la nueva página
+import CrearEspacio from "./paginas/CrearEspacio";
 import VerReportes from "./paginas/VerReportes";
 import EditarPerfilEspacio from "./paginas/EditarPerfilEspacio";
 
@@ -91,6 +91,14 @@ function App() {
           <Route path="/crear-espacio" element={<CrearEspacio />} /> {/* Nueva ruta */}
           <Route path="/ver-reportes" element={<VerReportes />} />
           <Route path="/editar-espacio/:nombre" element={<EditarPerfilEspacio />} />
+        <Route
+          path="/editar-perfil"
+          element={
+            <RutaProtegida>
+              <EditarPerfil />
+            </RutaProtegida>
+          }
+        />
         </Routes>
       </Router>
     </AuthProvider>

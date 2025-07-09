@@ -1,18 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexto/AuthContext";
 import "../estilos/style.css";
 import Breadcrumbs from "../componetes/Breadcrumbs";
 
 function PerfilAdmin() {
-  // Datos de ejemplo
-  const admin = {
-    nombre: "Alejandro",
-    apellido: "Prieto",
-    cedula: "v00000000",
-    correo: "prueba123@correo.unimet.edu.ve",
-    telefono: "04121234567",
-    categoria: "Administrador",
-  };
+  const { profile, currentUser } = useAuth();
+  const [admin, setAdmin] = useState(null);
 
   // Formatear teléfono
   const formatPhone = (phone) => {
@@ -23,6 +17,12 @@ function PerfilAdmin() {
     return phone;
   };
 
+  useEffect(() => {
+    if (profile && profile.categoria && profile.categoria.toLowerCase() === "administrador") {
+      setAdmin(profile);
+    }
+  }, [profile]);
+
   const navigate = useNavigate();
 
   // Simulación de logout
@@ -30,6 +30,10 @@ function PerfilAdmin() {
     alert("Sesión cerrada (simulado)");
     navigate("/");
   };
+
+  if (!admin) {
+    return <div style={{ textAlign: "center", marginTop: 80, color: '#dc3545' }}>No tienes permisos de administrador o no has iniciado sesión.</div>;
+  }
 
   return (
     <div className="landing" style={{ background: "#f7f7f7", minHeight: "100vh" }}>
@@ -231,7 +235,7 @@ function PerfilAdmin() {
                   alignItems: "center",
                   gap: 4
                 }}
-                onClick={() => alert("Editar perfil")}
+                onClick={() => navigate("/editar-perfil")}
               >
                 <span role="img" aria-label="edit">✏️</span> Editar
               </button>

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore"; // Añadir Firestore
+import { auth } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { upsertUsuario } from '../logica/supabaseUsuario';
 import "../estilos/style.css";
 
 function Registro() {
@@ -42,56 +43,61 @@ function Registro() {
       <form>
         <div style={{ marginBottom: 12 }}>
           <label>Nombre</label>
+          <label style={{ display: "block", marginBottom: 4, color: "#273b80", fontWeight: 500 }}>Nombre</label>
           <input
             name="nombre"
             value={form.nombre}
             onChange={handleChange}
-            placeholder="ejm. alejandro"
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
+            placeholder="Ejemplo: Alejandro"
+            style={{ width: "100%", padding: 10, marginTop: 2, borderRadius: 8, border: "1px solid #ccc", background: "#f5f6fa", color: "#222", fontSize: 16 }}
           />
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Apellido</label>
+          <label style={{ display: "block", marginBottom: 4, color: "#273b80", fontWeight: 500 }}>Apellido</label>
           <input
             name="apellido"
             value={form.apellido}
             onChange={handleChange}
-            placeholder="ejm. prieto"
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
+            placeholder="Ejemplo: Prieto"
+            style={{ width: "100%", padding: 10, marginTop: 2, borderRadius: 8, border: "1px solid #ccc", background: "#f5f6fa", color: "#222", fontSize: 16 }}
           />
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Número de cédula</label>
+          <label style={{ display: "block", marginBottom: 4, color: "#273b80", fontWeight: 500 }}>Número de cédula</label>
           <input
             name="cedula"
             value={form.cedula}
             onChange={handleChange}
-            placeholder="ejm. v12345678"
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
+            placeholder="Ejemplo: V12345678"
+            style={{ width: "100%", padding: 10, marginTop: 2, borderRadius: 8, border: "1px solid #ccc", background: "#f5f6fa", color: "#222", fontSize: 16 }}
           />
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Correo institucional</label>
+          <label style={{ display: "block", marginBottom: 4, color: "#273b80", fontWeight: 500 }}>Correo institucional</label>
           <input
             name="correo"
             value={form.correo}
             onChange={handleChange}
-            placeholder="ejm@unimet.com"
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
+            placeholder="Ejemplo: ejemplo@unimet.com"
+            style={{ width: "100%", padding: 10, marginTop: 2, borderRadius: 8, border: "1px solid #ccc", background: "#f5f6fa", color: "#222", fontSize: 16 }}
           />
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Número de teléfono</label>
+          <label style={{ display: "block", marginBottom: 4, color: "#273b80", fontWeight: 500 }}>Número de teléfono</label>
           <input
             name="telefono"
             value={form.telefono}
             onChange={handleChange}
-            placeholder="ejm. 04121234567"
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
+            placeholder="Ejemplo: 04121234567"
+            style={{ width: "100%", padding: 10, marginTop: 2, borderRadius: 8, border: "1px solid #ccc", background: "#f5f6fa", color: "#222", fontSize: 16 }}
           />
         </div>
         <div style={{ marginBottom: 12 }}>
-          <label>Categoría</label>
+          <label style={{ display: "block", marginBottom: 4, color: "#273b80", fontWeight: 500 }}>Categoría</label>
           <div>
             <label style={{ color: "#2c2c2c" }}>
               <input
@@ -140,7 +146,35 @@ function Registro() {
               padding: 10,
               borderRadius: 6,
             }}
-            onClick={() => setPaso(2)}
+            onClick={() => {
+              // Validar solo los campos de la primera pantalla
+              if (!form.nombre || !form.apellido || !form.cedula || !form.correo || !form.telefono || !form.categoria) {
+                setError("Todos los campos son obligatorios");
+                return;
+              }
+              if (!/^[A-Za-z]+$/.test(form.nombre)) {
+                setError("El nombre solo debe contener letras (sin espacios ni tildes)");
+                return;
+              }
+              if (!/^[A-Za-z]+$/.test(form.apellido)) {
+                setError("El apellido solo debe contener letras (sin espacios ni tildes)");
+                return;
+              }
+              if (!/^\d+$/.test(form.cedula)) {
+                setError("La cédula solo debe contener números, sin puntos ni guiones");
+                return;
+              }
+              if (!/^\d{10,15}$/.test(form.telefono)) {
+                setError("El número de teléfono debe contener solo números (10 a 15 dígitos)");
+                return;
+              }
+              if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.correo)) {
+                setError("Correo inválido");
+                return;
+              }
+              setError("");
+              setPaso(2);
+            }}
           >
             Continuar
           </button>
@@ -149,40 +183,77 @@ function Registro() {
     </div>
   );
   const [error, setError] = useState(""); 
-
-  // Función para registrar usuario 
-  const handleRegister = async () => {
-    // Validar que las contraseñas coincidan
+  // Validación de campos
+  const validateForm = () => {
+    // Validar campos obligatorios
+    if (!form.nombre || !form.apellido || !form.cedula || !form.correo || !form.telefono || !form.categoria) {
+      setError("Todos los campos son obligatorios");
+      return false;
+    }
+    // Nombre y apellido: solo letras (sin tildes, sin espacios, sin caracteres especiales)
+    if (!/^[A-Za-z]+$/.test(form.nombre)) {
+      setError("El nombre solo debe contener letras (sin espacios ni tildes)");
+      return false;
+    }
+    if (!/^[A-Za-z]+$/.test(form.apellido)) {
+      setError("El apellido solo debe contener letras (sin espacios ni tildes)");
+      return false;
+    }
+    // Cédula: solo números, sin caracteres especiales
+    if (!/^\d+$/.test(form.cedula)) {
+      setError("La cédula solo debe contener números, sin puntos ni guiones");
+      return false;
+    }
+    // Teléfono: solo números, sin caracteres especiales
+    if (!/^\d{10,15}$/.test(form.telefono)) {
+      setError("El número de teléfono debe contener solo números (10 a 15 dígitos)");
+      return false;
+    }
+    // Correo: formato válido y dominio institucional
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.correo)) {
+      setError("Correo inválido");
+      return false;
+    }
+    // Contraseña: mínimo 6 caracteres
+    if (form.contrasena.length < 6) {
+      setError("La contraseña debe tener al menos 6 caracteres");
+      return false;
+    }
+    // Contraseñas iguales
     if (form.contrasena !== form.repetirContrasena) {
       setError("Las contraseñas no coinciden");
-      return;
+      return false;
     }
+    setError("");
+    return true;
+  };
 
+  // Función para registrar usuario y login automático SOLO con Firebase
+  const handleRegister = async () => {
+    setError("");
+    if (!validateForm()) return;
     try {
-      // Crear usuario en Authentication
-      const auth = getAuth();
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        form.correo,
-        form.contrasena
-      );
-
-      // Guardar datos adicionales en Firestore
-      const db = getFirestore();
-      await setDoc(doc(db, "usuarios", userCredential.user.uid), {
+      // Crear usuario en Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, form.correo, form.contrasena);
+      const user = userCredential.user;
+      // Guardar datos adicionales en la tabla usuarios
+      await upsertUsuario({
         nombre: form.nombre,
         apellido: form.apellido,
         cedula: form.cedula,
         telefono: form.telefono,
         categoria: form.categoria,
         correo: form.correo,
-        fechaRegistro: new Date(),
+        contrasena: null // Nunca guardar la contraseña en texto plano
       });
-
-      setExito(true);
+      // Redirigir al dashboard
+      navigate("/dashboard");
     } catch (error) {
-      console.error("Error en registro:", error);
-      setError(error.message);
+      if (error.code === "auth/email-already-in-use") {
+        setError("El correo ya está registrado");
+      } else {
+        setError(error.message || 'Error al registrar usuario');
+      }
     }
   };
 
@@ -203,24 +274,26 @@ function Registro() {
       <form>
         <div style={{ marginBottom: 12 }}>
           <label>Contraseña</label>
+          <label style={{ display: "block", marginBottom: 4, color: "#273b80", fontWeight: 500 }}>Contraseña</label>
           <input
             type="password"
             name="contrasena"
             value={form.contrasena}
             onChange={handleChange}
             placeholder="Ingresa tu contraseña"
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
+            style={{ width: "100%", padding: 10, marginTop: 2, borderRadius: 8, border: "1px solid #ccc", background: "#f5f6fa", color: "#222", fontSize: 16 }}
           />
         </div>
         <div style={{ marginBottom: 12 }}>
           <label>Confirma tu contraseña</label>
+          <label style={{ display: "block", marginBottom: 4, color: "#273b80", fontWeight: 500 }}>Confirma tu contraseña</label>
           <input
             type="password"
             name="repetirContrasena"
             value={form.repetirContrasena}
             onChange={handleChange}
             placeholder="Repite tu contraseña"
-            style={{ width: "100%", padding: 8, marginTop: 4 }}
+            style={{ width: "100%", padding: 10, marginTop: 2, borderRadius: 8, border: "1px solid #ccc", background: "#f5f6fa", color: "#222", fontSize: 16 }}
           />
         </div>
         <div style={{ display: "flex", gap: 8, marginTop: 24 }}>

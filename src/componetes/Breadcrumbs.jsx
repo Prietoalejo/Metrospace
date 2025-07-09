@@ -2,6 +2,8 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 // Mapeo de rutas a nombres legibles
+import { useAuth } from "../contexto/AuthContext";
+
 const routeNames = {
   "/": "Inicio",
   "/reservas": "Mis reservas",
@@ -94,10 +96,26 @@ function getLogicalCrumbs(pathname) {
   return crumbs.filter((c, i, arr) => i === 0 || c.to !== arr[i - 1].to);
 }
 
+
 const Breadcrumbs = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { profile } = useAuth ? useAuth() : { profile: null };
   const logicalCrumbs = getLogicalCrumbs(location.pathname);
+
+  // Detectar si el usuario es admin
+  const isAdmin = profile && profile.categoria && profile.categoria.toLowerCase() === "administrador";
+
+  // Sobrescribir el destino de "Inicio" según el tipo de usuario
+  const handleNavigate = (to) => {
+    if (to === "/") {
+      if (isAdmin) {
+        navigate("/reportes");
+        return;
+      }
+    }
+    navigate(to);
+  };
 
   return (
     <nav aria-label="breadcrumb" style={{ color: "#888", fontSize: 16, margin: "16px auto 24px auto", userSelect: "none", display: "flex", justifyContent: "center", alignItems: "center", width: "100%", maxWidth: 900 }}>
@@ -106,7 +124,7 @@ const Breadcrumbs = () => {
           <span
             key={crumb.to + idx}
             style={{ cursor: "pointer", color: "#888", textDecoration: "none" }}
-            onClick={() => navigate(crumb.to)}
+            onClick={() => handleNavigate(crumb.to)}
           >
             {crumb.label} <span style={{ color: "#bbb" }}>{'>'}</span>{' '}
           </span>

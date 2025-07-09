@@ -1,82 +1,83 @@
+
 import React, { useState, useEffect } from "react";
+import { supabase } from "../../supabaseCredentials";
 import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
 import { useAuth } from "../contexto/AuthContext";
-import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-import { uploadImage } from "../../supabaseCredentials";
-import { app } from "../firebase";
-import { doc, updateDoc } from "firebase/firestore";
 import Breadcrumbs from "../componetes/Breadcrumbs";
 import Logo from '../assets/logo.png';
+import { getUsuarioByCorreo } from "../logica/supabaseUsuario";
 
-const db = getFirestore(app);
-const auth = getAuth(app);
+
+
 
 
 function PerfilUsuario() {
-
- 
-  const [isUploading, setIsUploading] = useState(false);
-  const { setProfile } = useAuth();
-
- const handleFileChange = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (!file.type.startsWith("image/")) {
-    alert("Solo puedes subir archivos de imagen.");
-    return;
-  }
-  try {
-    setIsUploading(true);
-    const user = auth.currentUser;
-    const imageUrl = await uploadImage(file, 'fotoprfil', user.uid);
-
-    // Actualiza Firestore
-    const userDocRef = doc(db, "usuarios", user.uid);
-    await updateDoc(userDocRef, { fotoprfil: imageUrl });
-
-    // Actualiza estado local
-    setUserData(prev => ({
-      ...prev,
-      fotoprfil: imageUrl
-    }));
-
-    // Actualiza contexto global
-    setProfile(prev => ({
-      ...prev,
-      fotoprfil: imageUrl
-    }));
-
-    // Si tienes setCurrentUser, actualiza también:
-    setCurrentUser(prev => ({
-      ...prev,
-      userData: {
-         ...prev.userData,
-         fotoprfil: imageUrl
-       }
-     }));
-
-  } catch (error) {
-    alert("Error al subir la imagen: " + error.message);
-  } finally {
-    setIsUploading(false);
-  }
-};
+  const { currentUser, logout, setProfile } = useAuth();
   const navigate = useNavigate();
-  const { currentUser, logout, setCurrentUser} = useAuth();
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
+  // Handler real para subir foto de perfil a Supabase Storage
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file || !currentUser?.email) return;
+    setIsUploading(true);
+    try {
+      // Nombre único: user_email + timestamp
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${currentUser.email.replace(/[^a-zA-Z0-9]/g, '_')}_${Date.now()}.${fileExt}`;
+      // Subir a bucket 'avatars' (debe existir en Supabase Storage)
+      const { data, error } = await supabase.storage.from('avatars').upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
+      if (error) throw error;
+      // Obtener URL pública
+      const { data: publicUrlData } = supabase.storage.from('avatars').getPublicUrl(fileName);
+      const publicUrl = publicUrlData?.publicUrl;
+      if (!publicUrl) throw new Error('No se pudo obtener la URL pública');
+      // Actualizar campo fotoprfil en la tabla usuarios
+      const { error: updateError } = await supabase
+        .from('usuarios')
+        .update({ fotoprfil: publicUrl })
+        .eq('correo', currentUser.email);
+      if (updateError) throw updateError;
+      // Refrescar datos
+      setUserData((prev) => ({ ...prev, fotoprfil: publicUrl }));
+      setProfile({ ...userData, fotoprfil: publicUrl });
+    } catch (err) {
+      alert("Error al subir la foto: " + (err.message || err));
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
+  // Cargar datos del usuario desde Supabase
   useEffect(() => {
-  if (currentUser && currentUser.userData && !userData) {
-    setUserData(currentUser.userData);
-    setLoading(false);
-  } else if (currentUser && !userData) {
-    setLoading(false);
-  }
-}, [currentUser, userData]);
+    async function fetchUser() {
+      if (currentUser && currentUser.email) {
+        try {
+          setLoading(true);
+          const usuario = await getUsuarioByCorreo(currentUser.email);
+          setUserData(usuario);
+          setProfile(usuario); // Actualiza el contexto global
+        } catch (error) {
+          setUserData(null);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    }
+    fetchUser();
+    // eslint-disable-next-line
+  }, [currentUser]);
+
+
+
 
 
   const handleLogout = async () => {
@@ -89,10 +90,10 @@ function PerfilUsuario() {
   };
 
 
+
   // Función para formatear el teléfono
   const formatPhone = (phone) => {
     if (!phone) return 'No disponible';
-    // Asume formato: 04121234567
     if (phone.length === 11) {
       return `(${phone.substring(0, 4)}) ${phone.substring(4, 7)} ${phone.substring(7)}`;
     }
