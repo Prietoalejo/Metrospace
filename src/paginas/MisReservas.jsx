@@ -1,11 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../estilos/style.css";
 import Breadcrumbs from "../componetes/Breadcrumbs";
 import Logo from '../assets/logo.png';
+import { supabase } from '../../supabaseCredentials';
+import { useAuth } from '../contexto/AuthContext';
 
 function MisReservas() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
+  const [reservas, setReservas] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchReservas() {
+      if (!profile || !profile.id) return;
+      setLoading(true);
+      // Traer reservas del usuario y datos del espacio relacionado
+      const { data, error } = await supabase
+        .from('reserva')
+        .select('id, fecha, hora_inicio, hora_fin, estado, espacio:espacio_id(id, nombre, imagenes)')
+        .eq('usuario_id', profile.id)
+        .order('fecha', { ascending: false });
+      if (!error && data) {
+        setReservas(data);
+      }
+      setLoading(false);
+    }
+    fetchReservas();
+  }, [profile]);
 
   return (
     <div
@@ -268,138 +291,52 @@ function MisReservas() {
         </div>
       </div>
 
+
       {/* Tabla de reservas */}
       <div
         style={{
           maxWidth: 1100,
           margin: "32px auto 0 auto",
           width: "100%",
-          display: "flex",
-          gap: 20,
-          padding: "0 0",
         }}
       >
-        {/* Espacio */}
-        <div style={{ minWidth: 120, flex: 1 }}>
-          <div
-            style={{
-              color: "#888",
-              fontWeight: 600,
-              fontSize: 16,
-              marginBottom: 8,
-            }}
-          >
-            Espacio
+        {/* Encabezados */}
+        <div style={{ display: "flex", gap: 20, padding: "0 0" }}>
+          <div style={{ minWidth: 120, flex: 1, color: "#888", fontWeight: 600, fontSize: 16 }}>Espacio</div>
+          <div style={{ minWidth: 150, flex: 1, color: "#888", fontWeight: 600, fontSize: 16 }}>Nombre</div>
+          <div style={{ minWidth: 150, flex: 1, color: "#888", fontWeight: 600, fontSize: 16 }}>Fecha</div>
+          <div style={{ minWidth: 150, flex: 1, color: "#888", fontWeight: 600, fontSize: 16 }}>Hora</div>
+          <div style={{ minWidth: 120, flex: 1, color: "#888", fontWeight: 600, fontSize: 16 }}>Estado</div>
+        </div>
+        {/* Filas de reservas */}
+        {loading ? (
+          <div style={{ color: '#888', fontSize: 18, margin: '40px 0', textAlign: 'center' }}>Cargando reservas...</div>
+        ) : reservas.length === 0 ? (
+          <div style={{ color: "#222", fontSize: 20, fontWeight: 400, textAlign: "center", margin: '40px 0' }}>
+            No tienes reservas activas
           </div>
-        </div>
-        {/* Nombre */}
-        <div style={{ minWidth: 150, flex: 1 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              color: "#888",
-              fontWeight: 600,
-              fontSize: 16,
-            }}
-          >
-            Nombre
-            <div
-              style={{
-                width: 16,
-                height: 16,
-                background: "#bbb",
-                borderRadius: 4,
-                display: "inline-block",
-              }}
-            />
-          </div>
-        </div>
-        {/* Fecha */}
-        <div style={{ minWidth: 150, flex: 1 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              color: "#888",
-              fontWeight: 600,
-              fontSize: 16,
-            }}
-          >
-            Fecha
-            <div
-              style={{
-                width: 16,
-                height: 16,
-                background: "#bbb",
-                borderRadius: 4,
-                display: "inline-block",
-              }}
-            />
-          </div>
-        </div>
-        {/* Hora */}
-        <div style={{ minWidth: 150, flex: 1 }}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              color: "#888",
-              fontWeight: 600,
-              fontSize: 16,
-            }}
-          >
-            Hora
-            <div
-              style={{
-                width: 16,
-                height: 16,
-                background: "#bbb",
-                borderRadius: 4,
-                display: "inline-block",
-              }}
-            />
-          </div>
-        </div>
-        {/* Detalles */}
-        <div style={{ minWidth: 120, flex: 1 }}>
-          <div
-            style={{
-              color: "#888",
-              fontWeight: 600,
-              fontSize: 16,
-            }}
-          >
-            Detalles
-          </div>
-        </div>
-      </div>
-
-      {/* Mensaje de sin reservas */}
-      <div
-        style={{
-          maxWidth: 1100,
-          margin: "40px auto 0 auto",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: 120,
-        }}
-      >
-        <div
-          style={{
-            color: "#222",
-            fontSize: 20,
-            fontWeight: 400,
-            textAlign: "center",
-          }}
-        >
-          No tienes reservas activas
-        </div>
+        ) : (
+          reservas.map(reserva => (
+            <div key={reserva.id} style={{ display: "flex", gap: 20, alignItems: "center", background: "#fff", borderRadius: 10, margin: "18px 0", boxShadow: "0 1px 4px #0001", padding: "12px 0" }}>
+              {/* Miniatura */}
+              <div style={{ minWidth: 120, flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <img
+                  src={Array.isArray(reserva.espacio?.imagenes) && reserva.espacio.imagenes.length > 0 ? reserva.espacio.imagenes[0] : (reserva.espacio?.imagen || "https://via.placeholder.com/120x90?text=Sin+foto")}
+                  alt={reserva.espacio?.nombre || "Espacio"}
+                  style={{ width: 80, height: 60, objectFit: 'cover', borderRadius: 8 }}
+                />
+              </div>
+              {/* Nombre */}
+              <div style={{ minWidth: 150, flex: 1, fontWeight: 500, color: '#222' }}>{reserva.espacio?.nombre || '-'}</div>
+              {/* Fecha */}
+              <div style={{ minWidth: 150, flex: 1, color: '#444' }}>{reserva.fecha}</div>
+              {/* Hora */}
+              <div style={{ minWidth: 150, flex: 1, color: '#444' }}>{reserva.hora_inicio} - {reserva.hora_fin}</div>
+              {/* Estado */}
+              <div style={{ minWidth: 120, flex: 1, color: reserva.estado === 'pendiente' ? '#f78628' : '#388e3c', fontWeight: 600, textTransform: 'capitalize' }}>{reserva.estado}</div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Footer siempre abajo */}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "../estilos/style.css";
 import Header from "../componetes/HeaderNavigation";
 import Footer from "../componetes/Footer";
@@ -7,7 +7,7 @@ import Breadcrumbs from "../componetes/Breadcrumbs";
 
 import { getEspacios } from "../logica/supabaseEspacios";
 
-const DetallesReserva = ({ espacio }) => {
+const DetallesReserva = ({ espacio, onPagar, loadingPagar }) => {
   // Calcular promedio de estrellas
   const totalEstrellas = espacio.comentarios.reduce((acc, c) => acc + (c.estrellas || 0), 0);
   const cantidad = espacio.comentarios.filter(c => c.estrellas).length;
@@ -40,33 +40,39 @@ const DetallesReserva = ({ espacio }) => {
         <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600, margin: '8px 0' }}>
           <span>Total</span><span>${espacio.total.toFixed(2)}</span>
         </div>
-        <button style={{ background: '#f78628', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 0', width: '100%', fontWeight: 600, marginTop: 8, cursor: 'pointer' }}>Pagar</button>
+        <button
+          style={{ background: '#f78628', color: '#fff', border: 'none', borderRadius: 8, padding: '8px 0', width: '100%', fontWeight: 600, marginTop: 8, cursor: loadingPagar ? 'not-allowed' : 'pointer', opacity: loadingPagar ? 0.7 : 1 }}
+          onClick={onPagar}
+          disabled={loadingPagar}
+        >
+          {loadingPagar ? 'Procesando...' : 'Pagar'}
+        </button>
       </div>
     </div>
   );
 };
 
-const FormularioReserva = () => (
+const FormularioReserva = ({ fecha, setFecha, horaInicio, setHoraInicio, horaFin, setHoraFin, requerimientos, setRequerimientos }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
     <div style={{ display: 'flex', gap: 24 }}>
       <div style={{ flex: 1 }}>
         <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Fecha</label>
-        <input type="date" style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
+        <input type="date" value={fecha} onChange={e => setFecha(e.target.value)} style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
       </div>
       <div style={{ flex: 1, display: 'flex', gap: 8, alignItems: 'end' }}>
         <div style={{ flex: 'none' }}>
           <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Hora inicio</label>
-          <input type="time" style={{ width: 90, padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
+          <input type="time" value={horaInicio} onChange={e => setHoraInicio(e.target.value)} style={{ width: 90, padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
         </div>
         <div style={{ flex: 'none' }}>
           <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Hora fin</label>
-          <input type="time" style={{ width: 90, padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
+          <input type="time" value={horaFin} onChange={e => setHoraFin(e.target.value)} style={{ width: 90, padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
         </div>
       </div>
     </div>
     <div style={{ width: '100%' }}>
       <label style={{ fontWeight: 500, fontSize: 14, color: '#222' }}>Requerimientos adicionales</label>
-      <input type="text" placeholder="ejem. equipos, material..." style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
+      <input type="text" value={requerimientos} onChange={e => setRequerimientos(e.target.value)} placeholder="ejem. equipos, material..." style={{ width: '100%', padding: 8, borderRadius: 8, border: '1px solid #ccc', marginTop: 4, color: '#111', background: '#f5f5f5' }} />
     </div>
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginTop: 8 }}>
       <div style={{ background: '#fff', borderRadius: 12, padding: 16, boxShadow: '0 2px 8px #0001', display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -111,11 +117,22 @@ const Comentarios = ({ comentarios }) => (
 );
 
 
+import { insertReserva } from "../logica/supabaseReservas";
+import { useAuth } from "../contexto/AuthContext";
+
 const NuevaReservaCompleta = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [espacio, setEspacio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [fecha, setFecha] = useState("");
+  const [horaInicio, setHoraInicio] = useState("");
+  const [horaFin, setHoraFin] = useState("");
+  const [requerimientos, setRequerimientos] = useState("");
+  const [loadingPagar, setLoadingPagar] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  const { profile } = useAuth();
 
   useEffect(() => {
     async function fetchEspacio() {
@@ -135,6 +152,45 @@ const NuevaReservaCompleta = () => {
     fetchEspacio();
   }, [id]);
 
+  const handlePagar = async () => {
+    setFeedback("");
+    if (!fecha || !horaInicio || !horaFin) {
+      setFeedback("Completa todos los campos de fecha y hora.");
+      return;
+    }
+    if (!profile || !profile.id) {
+      setFeedback("No se encontró el usuario autenticado.");
+      return;
+    }
+    setLoadingPagar(true);
+    try {
+      const totalConImpuesto = (espacio.precio || 0) * 1.16;
+      const reserva = {
+        usuario_id: profile.id,
+        espacio_id: espacio.id,
+        fecha,
+        hora_inicio: horaInicio,
+        hora_fin: horaFin,
+        requerimientos,
+        pago: totalConImpuesto,
+      };
+      const { error } = await insertReserva(reserva);
+      if (error) {
+        setFeedback("Error al registrar la reserva. Intenta de nuevo.");
+      } else {
+        setFeedback("¡Reserva realizada con éxito!");
+        setFecha(""); setHoraInicio(""); setHoraFin(""); setRequerimientos("");
+        setTimeout(() => {
+          navigate("/reservas");
+        }, 1200);
+      }
+    } catch (e) {
+      setFeedback("Error inesperado al reservar.");
+    } finally {
+      setLoadingPagar(false);
+    }
+  };
+
   return (
     <div className="landing">
       <Header />
@@ -147,15 +203,29 @@ const NuevaReservaCompleta = () => {
           <div style={{ color: '#d32f2f', fontStyle: 'italic' }}>{error}</div>
         ) : espacio && (
           <>
-            <DetallesReserva espacio={{
-              ...espacio,
-              imagen: Array.isArray(espacio.imagenes) && espacio.imagenes.length > 0 ? espacio.imagenes[0] : (espacio.imagen || "https://via.placeholder.com/120x90?text=Sin+foto"),
-              comentarios: espacio.comentarios || [],
-              subtotal: espacio.precio || 0,
-              impuesto: (espacio.precio || 0) * 0.16,
-              total: (espacio.precio || 0) * 1.16,
-            }} />
-            <FormularioReserva />
+            <DetallesReserva
+              espacio={{
+                ...espacio,
+                imagen: Array.isArray(espacio.imagenes) && espacio.imagenes.length > 0 ? espacio.imagenes[0] : (espacio.imagen || "https://via.placeholder.com/120x90?text=Sin+foto"),
+                comentarios: espacio.comentarios || [],
+                subtotal: espacio.precio || 0,
+                impuesto: (espacio.precio || 0) * 0.16,
+                total: (espacio.precio || 0) * 1.16,
+              }}
+              onPagar={handlePagar}
+              loadingPagar={loadingPagar}
+            />
+            <FormularioReserva
+              fecha={fecha}
+              setFecha={setFecha}
+              horaInicio={horaInicio}
+              setHoraInicio={setHoraInicio}
+              horaFin={horaFin}
+              setHoraFin={setHoraFin}
+              requerimientos={requerimientos}
+              setRequerimientos={setRequerimientos}
+            />
+            {feedback && <div style={{ color: feedback.includes('éxito') ? '#388e3c' : '#d32f2f', fontWeight: 500, marginBottom: 16 }}>{feedback}</div>}
             <Comentarios comentarios={espacio.comentarios || []} />
           </>
         )}
