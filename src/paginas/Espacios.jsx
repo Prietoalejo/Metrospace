@@ -1,69 +1,61 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // Eliminado: No se usa HeaderNavigation aquí
 import Footer from "../componetes/Footer";
 import Breadcrumbs from "../componetes/Breadcrumbs";
 import "../estilos/style.css";
 
-const espacios = [
-	{
-		nombre: "Auditorio Pensairi",
-		capacidad: 200,
-		tipo: "Auditorio",
-		imagen:
-			"https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80",
-	},
-	{
-		nombre: "Salones del A1",
-		capacidad: null,
-		tipo: "Salón",
-		imagen:
-			"https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=400&q=80",
-	},
-	{
-		nombre: "Salones del EMG",
-		capacidad: null,
-		tipo: "Salón",
-		imagen:
-			"https://images.pexels.com/photos/1181671/pexels-photo-1181671.jpeg?auto=compress&w=400&q=80",
-	},
-	{
-		nombre: "Auditorio Paraninfo Luisa Rodríguez De Mendoza",
-		capacidad: 150,
-		tipo: "Auditorio",
-		imagen:
-			"https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80",
-	},
-	{
-		nombre: "Laboratorios",
-		capacidad: null,
-		tipo: "Laboratorio",
-		imagen:
-			"https://images.pexels.com/photos/256401/pexels-photo-256401.jpeg?auto=compress&w=400&q=80",
-	},
-	{
-		nombre: "Salón del A2",
-		capacidad: null,
-		tipo: "Salón",
-		imagen:
-			"https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=400&q=80",
-	},
-];
+import { getEspacios, eliminarEspacio } from "../logica/supabaseEspacios";
+
 
 const Espacios = () => {
-	const navigate = useNavigate();
-	const handleEditarEspacio = (espacio) => {
-		navigate(`/editar-espacio/${encodeURIComponent(espacio.nombre)}`);
-	};
+  const navigate = useNavigate();
+  const [espacios, setEspacios] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [eliminando, setEliminando] = useState(null);
 
-	// Header solo con botón de perfil
-	const handlePerfilClick = () => {
-		window.location.href = "/perfil-admin";
-	};
+  useEffect(() => {
+	async function fetchEspacios() {
+	  setLoading(true);
+	  try {
+		const data = await getEspacios();
+		setEspacios(data || []);
+		setError(null);
+	  } catch (err) {
+		setError("Error al cargar los espacios");
+	  } finally {
+		setLoading(false);
+	  }
+	}
+	fetchEspacios();
+  }, []);
 
-	const handleCrearEspacio = () => {
-		window.location.href = "/crear-espacio";
-	};
+  const handleEditarEspacio = (espacio) => {
+	navigate(`/editar-espacio/${espacio.id}`);
+  };
+
+  const handleEliminarEspacio = async (espacio) => {
+	if (!window.confirm(`¿Seguro que deseas eliminar el espacio "${espacio.nombre}"? Esta acción no se puede deshacer.`)) return;
+	setEliminando(espacio.id);
+	try {
+	  await eliminarEspacio(espacio.id);
+	  setEspacios((prev) => prev.filter((e) => e.id !== espacio.id));
+	} catch (err) {
+	  alert("Error al eliminar el espacio");
+	} finally {
+	  setEliminando(null);
+	}
+  };
+
+
+  const handlePerfilClick = () => {
+	window.location.href = "/perfil-admin";
+  };
+
+  const handleCrearEspacio = () => {
+	window.location.href = "/crear-espacio";
+  };
 
 	return (
 		<div className="landing" style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -249,7 +241,7 @@ const Espacios = () => {
 											<div
 												style={{
 													color: "#888",
-													fontSize: 15,
+												fontSize: 15,
 												}}
 											>
 												Capacidad para {espacio.capacidad} personas
@@ -274,7 +266,7 @@ const Espacios = () => {
 										&#8250;
 									</div>
 								</button>
-							))}
+						))}
 					</div>
 					<div style={{ flex: 1, minWidth: 400 }}>
 						{espacios
@@ -325,7 +317,7 @@ const Espacios = () => {
 											<div
 												style={{
 													color: "#888",
-													fontSize: 15,
+												fontSize: 15,
 												}}
 											>
 												Capacidad para {espacio.capacidad} personas
@@ -350,7 +342,7 @@ const Espacios = () => {
 										&#8250;
 									</div>
 								</button>
-							))}
+						))}
 					</div>
 				</div>
 			</div>
