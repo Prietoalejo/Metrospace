@@ -227,12 +227,14 @@ const Espacios = () => {
 										style={{
 											padding: 24,
 											flex: 1,
+											color: "#888" // Aplica el color a todo el contenido de la tarjeta
 										}}
 									>
 										<div
 											style={{
 												fontWeight: 600,
 												fontSize: 18,
+												color: "#888"
 											}}
 										>
 											{espacio.nombre}
@@ -241,7 +243,7 @@ const Espacios = () => {
 											<div
 												style={{
 													color: "#888",
-												fontSize: 15,
+													fontSize: 15,
 												}}
 											>
 												Capacidad para {espacio.capacidad} personas

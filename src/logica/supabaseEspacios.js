@@ -1,10 +1,11 @@
+
 import { supabase } from '../../supabaseCredentials';
 
-// Obtener todos los espacios con su categoría e imágenes
+// Obtener todos los espacios
 export async function getEspacios() {
   const { data, error } = await supabase
-    .from('espacios')
-    .select('*, categorias_espacios(nombre), imagenes_espacio(url)')
+    .from('espacio')
+    .select('*')
     .order('id', { ascending: true });
   if (error) throw error;
   return data;
@@ -13,7 +14,7 @@ export async function getEspacios() {
 // Crear un nuevo espacio
 export async function crearEspacio(espacio) {
   const { data, error } = await supabase
-    .from('espacios')
+    .from('espacio')
     .insert([espacio])
     .select()
     .single();
@@ -24,7 +25,7 @@ export async function crearEspacio(espacio) {
 // Editar un espacio existente
 export async function editarEspacio(id, updates) {
   const { data, error } = await supabase
-    .from('espacios')
+    .from('espacio')
     .update(updates)
     .eq('id', id)
     .select()
@@ -36,7 +37,7 @@ export async function editarEspacio(id, updates) {
 // Eliminar un espacio
 export async function eliminarEspacio(id) {
   const { error } = await supabase
-    .from('espacios')
+    .from('espacio')
     .delete()
     .eq('id', id);
   if (error) throw error;

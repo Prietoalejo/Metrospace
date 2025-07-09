@@ -90,7 +90,7 @@ function App() {
           <Route path="/espacios" element={<Espacios />} />
           <Route path="/crear-espacio" element={<CrearEspacio />} /> {/* Nueva ruta */}
           <Route path="/ver-reportes" element={<VerReportes />} />
-          <Route path="/editar-espacio/:nombre" element={<EditarPerfilEspacio />} />
+          <Route path="/editar-espacio/:id" element={<EditarPerfilEspacio />} />
         <Route
           path="/editar-perfil"
           element={
