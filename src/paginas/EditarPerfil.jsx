@@ -38,9 +38,15 @@ function EditarPerfil() {
 
   const validateForm = () => {
     const newErrors = {};
+    // Nombre y apellido: solo letras (sin espacios, tildes ni caracteres especiales)
     if (!formData.nombre.trim()) newErrors.nombre = "El nombre es requerido";
+    else if (!/^[A-Za-z]+$/.test(formData.nombre)) newErrors.nombre = "El nombre solo debe contener letras (sin espacios ni tildes)";
     if (!formData.apellido.trim()) newErrors.apellido = "El apellido es requerido";
+    else if (!/^[A-Za-z]+$/.test(formData.apellido)) newErrors.apellido = "El apellido solo debe contener letras (sin espacios ni tildes)";
+    // Cédula: solo números, sin caracteres especiales
     if (!formData.cedula.trim()) newErrors.cedula = "La cédula es requerida";
+    else if (!/^\d+$/.test(formData.cedula)) newErrors.cedula = "La cédula solo debe contener números, sin puntos ni guiones";
+    // Teléfono: solo números, exactamente 11 dígitos
     if (!formData.telefono.trim()) newErrors.telefono = "El teléfono es requerido";
     else if (!/^\d{11}$/.test(formData.telefono.replace(/\D/g, ""))) newErrors.telefono = "El teléfono debe tener 11 dígitos";
     setErrors(newErrors);
