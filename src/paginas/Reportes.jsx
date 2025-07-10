@@ -1,37 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "../componetes/Modal";
 import Breadcrumbs from "../componetes/Breadcrumbs";
-
-const eventos = [
-	{
-		espacio: "Auditorio Paraninfo Luisa Rodríguez De Mendoza",
-		imagen:
-			"https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=80&q=80",
-		fecha: "21/05/2025",
-		hora: "12:00 pm",
-	},
-	{
-		espacio: "A1-206",
-		imagen:
-			"https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=80&q=80",
-		fecha: "16/03/2025",
-		hora: "2:00 pm",
-	},
-	{
-		espacio: "Laboratorio de Química",
-		imagen:
-			"https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=80&q=80",
-		fecha: "12/03/2025",
-		hora: "1:00 pm",
-	},
-	{
-		espacio: "Auditorio Pensairi",
-		imagen:
-			"https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=80&q=80",
-		fecha: "27/01/2025",
-		hora: "6:00 pm",
-	},
-];
+import { supabase } from '../../supabaseCredentials';
+import { deleteReserva } from "../logica/supabaseReservas";
 
 function Reportes() {
 	// Navegación a perfil
@@ -39,10 +10,12 @@ function Reportes() {
 		window.location.href = "/perfil-admin";
 	};
 
-	const [modal, setModal] = useState(null); // null | 'detalles' | 'editar' | 'eliminar' | 'confirmarEliminar'
-	const [eventoSeleccionado, setEventoSeleccionado] = useState(null);
-	const [editFecha, setEditFecha] = useState("2025-01-01");
-	const [editHora, setEditHora] = useState("14:00-15:00");
+const [modal, setModal] = useState(null); // null | 'detalles' | 'editar' | 'eliminar' | 'confirmarEliminar'
+const [reservaSeleccionada, setReservaSeleccionada] = useState(null);
+const [editFecha, setEditFecha] = useState("");
+const [editHora, setEditHora] = useState("");
+const [reservas, setReservas] = useState([]);
+const [loading, setLoading] = useState(true);
 
 	const horarios = [
 		{ label: "02:00 pm - 03:00 pm", value: "14:00-15:00" },
@@ -50,21 +23,45 @@ function Reportes() {
 		{ label: "04:00 pm - 05:00 pm", value: "16:00-17:00" },
 	];
 
-	const abrirModalDetalles = (evento) => {
-		setEventoSeleccionado(evento);
-		setModal("detalles");
-	};
-	const cerrarModal = () => {
-		setModal(null);
-		setEventoSeleccionado(null);
-	};
+const abrirModalDetalles = (reserva) => {
+  setReservaSeleccionada(reserva);
+  setModal("detalles");
+};
+const cerrarModal = () => {
+  setModal(null);
+  setReservaSeleccionada(null);
+};
+
+useEffect(() => {
+  async function fetchReservas() {
+	setLoading(true);
+	const { data, error } = await supabase
+	  .from('reserva')
+	  .select('id, fecha, hora_inicio, hora_fin, estado, requerimientos, pago, espacio:espacio_id(id, nombre, imagenes)')
+	  .order('fecha', { ascending: false });
+	if (!error && data) {
+	  setReservas(data);
+	}
+	setLoading(false);
+  }
+  fetchReservas();
+}, []);
 	const abrirModalEditar = () => setModal("editar");
-	const abrirModalEliminar = () => setModal("eliminar");
+const abrirModalEliminar = () => setModal("eliminar");
 	const abrirModalConfirmarEliminar = () => setModal("confirmarEliminar");
 	const eliminarReserva = () => {
-		// Aquí tu equipo debe implementar la lógica real de eliminación
-		cerrarModal();
-	};
+	// Lógica real de eliminación
+	if (!reservaSeleccionada) return;
+	deleteReserva(reservaSeleccionada.id)
+	  .then(({ error }) => {
+		if (!error) {
+		  setReservas(reservas.filter(r => r.id !== reservaSeleccionada.id));
+		  cerrarModal();
+		} else {
+		  alert("Error al eliminar la reserva");
+		}
+	  });
+};
 
 	return (
 		<div
@@ -74,7 +71,7 @@ function Reportes() {
 				background: "#fff",
 				display: "flex",
 				flexDirection: "column",
-                color: "#111" // Forzar texto negro global
+				color: "#111" // Forzar texto negro global
 			}}
 		>
 			{/* Header */}
@@ -246,7 +243,7 @@ function Reportes() {
 						borderRadius: 12,
 						boxShadow: "0 2px 8px #0001",
 						padding: 0,
-                        color: "#111" // Forzar texto negro en tabla
+						color: "#111" // Forzar texto negro en tabla
 					}}
 				>
 					<table style={{ width: "100%", borderCollapse: "collapse", color: "#111" }}>
@@ -304,66 +301,31 @@ function Reportes() {
 								</th>
 							</tr>
 						</thead>
-						<tbody>
-							{eventos.map((evento, idx) => (
-								<tr key={idx} style={{ borderBottom: "1px solid #eee" }}>
-									<td
-										style={{
-											padding: "16px 0 16px 24px",
-										}}
-									>
-										<img
-											src={evento.imagen}
-											alt={evento.espacio}
-											style={{
-												width: 56,
-												height: 56,
-												borderRadius: 8,
-												objectFit: "cover",
-												marginRight: 12,
-												verticalAlign: "middle",
-											}}
-										/>
-									</td>
-									<td
-										style={{
-											padding: "16px 0",
-											color: "#222",
-											fontWeight: 500,
-										}}
-									>
-										{evento.espacio}
-									</td>
-									<td
-										style={{
-											padding: "16px 0",
-											color: "#222",
-										}}
-									>
-										{evento.fecha}
-									</td>
-									<td
-										style={{
-											padding: "16px 0",
-											color: "#222",
-										}}
-									>
-										{evento.hora}
-									</td>
-									<td
-										style={{
-											padding: "16px 24px 16px 0",
-											color: "#f78628",
-											fontWeight: 500,
-											cursor: "pointer",
-										}}
-										onClick={() => abrirModalDetalles(evento)}
-									>
-										Ver detalles
-									</td>
-								</tr>
-							))}
-						</tbody>
+<tbody>
+  {loading ? (
+	<tr><td colSpan={5} style={{ textAlign: 'center', padding: 32, color: '#888' }}>Cargando reservas...</td></tr>
+  ) : reservas.length === 0 ? (
+	<tr><td colSpan={5} style={{ textAlign: 'center', padding: 32, color: '#888' }}>No hay reservas registradas</td></tr>
+  ) : (
+	reservas.map((reserva) => (
+	  <tr key={reserva.id} style={{ borderBottom: "1px solid #eee" }}>
+		<td style={{ padding: "16px 0 16px 24px" }}>
+		  <img
+			src={Array.isArray(reserva.espacio?.imagenes) && reserva.espacio.imagenes.length > 0 ? reserva.espacio.imagenes[0] : "https://via.placeholder.com/80x80?text=Sin+foto"}
+			alt={reserva.espacio?.nombre || "Espacio"}
+			style={{ width: 56, height: 56, borderRadius: 8, objectFit: "cover", marginRight: 12, verticalAlign: "middle" }}
+		  />
+		</td>
+		<td style={{ padding: "16px 0", color: "#222", fontWeight: 500 }}>{reserva.espacio?.nombre || '-'}</td>
+		<td style={{ padding: "16px 0", color: "#222" }}>{reserva.fecha}</td>
+		<td style={{ padding: "16px 0", color: "#222" }}>{reserva.hora_inicio} - {reserva.hora_fin}</td>
+		<td style={{ padding: "16px 24px 16px 0", color: "#f78628", fontWeight: 500, cursor: "pointer" }} onClick={() => abrirModalDetalles(reserva)}>
+		  Ver detalles
+		</td>
+	  </tr>
+	))
+  )}
+</tbody>
 					</table>
 				</div>
 			</main>
@@ -403,43 +365,43 @@ function Reportes() {
 			</footer>
 
 			{/* MODAL: Detalles de la reserva */}
-			<Modal isOpen={modal === "detalles"} onClose={cerrarModal}>
-				<div style={{ minWidth: 350, maxWidth: 400, color: "#111" }}>
-					<h2 style={{ textAlign: "center", fontWeight: 500, fontSize: 22, marginBottom: 24, color: "#111" }}>Detalles de la reserva</h2>
-					<table style={{ width: "100%", marginBottom: 24, color: "#111" }}>
-						<tbody>
-							<tr>
-								<td style={{ color: "#888", padding: "6px 0" }}>Espacio</td>
-								<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{eventoSeleccionado?.espacio}</td>
-							</tr>
-							<tr>
-								<td style={{ color: "#888", padding: "6px 0" }}>Fecha</td>
-								<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>01/01/2025</td>
-							</tr>
-							<tr>
-								<td style={{ color: "#888", padding: "6px 0" }}>Horario</td>
-								<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>02:00 pm - 03:00 pm</td>
-							</tr>
-							<tr>
-								<td style={{ color: "#888", padding: "6px 0" }}>Observaciones</td>
-								<td style={{ fontWeight: 500, padding: "6px 0", color: "#f78628" }}>Ninguna</td>
-							</tr>
-							<tr>
-								<td style={{ color: "#888", padding: "6px 0" }}>Monto total</td>
-								<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>$ 59,50</td>
-							</tr>
-						</tbody>
-					</table>
-					<div style={{ display: "flex", justifyContent: "center", gap: 32 }}>
-						<button onClick={abrirModalEditar} style={{ background: "none", border: "none", color: "#111", fontWeight: 500, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-							Editar <span style={{ fontSize: 18 }}>✏️</span>
-						</button>
-						<button onClick={abrirModalEliminar} style={{ background: "none", border: "none", color: "#f44336", fontWeight: 500, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-							Eliminar <span style={{ fontSize: 18 }}>🗑️</span>
-						</button>
-					</div>
-				</div>
-			</Modal>
+<Modal isOpen={modal === "detalles"} onClose={cerrarModal}>
+  <div style={{ minWidth: 350, maxWidth: 400, color: "#111" }}>
+	<h2 style={{ textAlign: "center", fontWeight: 500, fontSize: 22, marginBottom: 24, color: "#111" }}>Detalles de la reserva</h2>
+	<table style={{ width: "100%", marginBottom: 24, color: "#111" }}>
+	  <tbody>
+		<tr>
+		  <td style={{ color: "#888", padding: "6px 0" }}>Espacio</td>
+		  <td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{reservaSeleccionada?.espacio?.nombre || '-'}</td>
+		</tr>
+		<tr>
+		  <td style={{ color: "#888", padding: "6px 0" }}>Fecha</td>
+		  <td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{reservaSeleccionada?.fecha || '-'}</td>
+		</tr>
+		<tr>
+		  <td style={{ color: "#888", padding: "6px 0" }}>Horario</td>
+		  <td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{reservaSeleccionada?.hora_inicio} - {reservaSeleccionada?.hora_fin}</td>
+		</tr>
+		<tr>
+		  <td style={{ color: "#888", padding: "6px 0" }}>Observaciones</td>
+		  <td style={{ fontWeight: 500, padding: "6px 0", color: "#f78628" }}>{reservaSeleccionada?.requerimientos || 'Ninguna'}</td>
+		</tr>
+		<tr>
+		  <td style={{ color: "#888", padding: "6px 0" }}>Monto total</td>
+		  <td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>${reservaSeleccionada?.pago?.toFixed ? reservaSeleccionada.pago.toFixed(2) : reservaSeleccionada?.pago || '-'}</td>
+		</tr>
+	  </tbody>
+	</table>
+	<div style={{ display: "flex", justifyContent: "center", gap: 32 }}>
+	  <button onClick={abrirModalEditar} style={{ background: "none", border: "none", color: "#111", fontWeight: 500, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+		Editar <span style={{ fontSize: 18 }}>✏️</span>
+	  </button>
+	  <button onClick={abrirModalEliminar} style={{ background: "none", border: "none", color: "#f44336", fontWeight: 500, fontSize: 16, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+		Eliminar <span style={{ fontSize: 18 }}>🗑️</span>
+	  </button>
+	</div>
+  </div>
+</Modal>
 
 			{/* MODAL: Editar reserva */}
 			<Modal isOpen={modal === "editar"} onClose={cerrarModal}>
@@ -449,7 +411,9 @@ function Reportes() {
 						<tbody>
 							<tr>
 								<td style={{ color: "#888", padding: "6px 0" }}>Espacio</td>
-								<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{eventoSeleccionado?.espacio}</td>
+								<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{reservaSeleccionada?.espacio?.nombre || '-'}</td>
+<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{reservaSeleccionada?.espacio?.nombre || '-'}</td>
+<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{reservaSeleccionada?.espacio?.nombre || '-'}</td>
 							</tr>
 							<tr>
 								<td style={{ color: "#888", padding: "6px 0" }}>Fecha</td>
@@ -484,7 +448,7 @@ function Reportes() {
 						<tbody>
 							<tr>
 								<td style={{ color: "#888", padding: "6px 0" }}>Espacio</td>
-								<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{eventoSeleccionado?.espacio}</td>
+								<td style={{ fontWeight: 500, padding: "6px 0", color: "#111" }}>{reservaSeleccionada?.espacio?.nombre || '-'}</td>
 							</tr>
 							<tr>
 								<td style={{ color: "#888", padding: "6px 0" }}>Fecha</td>

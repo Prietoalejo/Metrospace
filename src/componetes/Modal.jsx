@@ -15,9 +15,11 @@ const Modal = ({ isOpen, onClose, children }) => {
       justifyContent: "center",
       zIndex: 1000
     }}>
-      <div style={{ background: "#fff", borderRadius: 8, padding: 32, minWidth: 320, position: "relative", boxShadow: "0 2px 16px #0003" }}>
-        <button onClick={onClose} style={{ position: "absolute", top: 12, right: 12, fontSize: 22, background: "none", border: "none", cursor: "pointer", color: "#888" }}>×</button>
-        {children}
+      <div style={{ background: "#fff", borderRadius: 8, padding: 32, minWidth: 320, position: "relative", boxShadow: "0 2px 16px #0003", color: "#111" }}>
+        <button onClick={onClose} style={{ position: "absolute", top: 12, right: 12, fontSize: 22, background: "none", border: "none", cursor: "pointer", color: "#111" }}>×</button>
+        <div style={{ color: "#111" }}>
+          {children}
+        </div>
       </div>
     </div>
   );

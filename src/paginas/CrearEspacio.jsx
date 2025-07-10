@@ -304,7 +304,7 @@ const CrearEspacio = () => {
 				setModalTipoOpen(false);
 				setNuevoTipo("");
 			  }}
-			  style={{ background: "none", border: "1px solid #ccc", borderRadius: 8, padding: "10px 24px", fontWeight: 600, cursor: "pointer" }}
+			  style={{ background: "none", border: "1px solid #ccc", borderRadius: 8, padding: "10px 24px", fontWeight: 600, cursor: "pointer", color: "#111" }}
 			>Cancelar</button>
 			<button
 			  onClick={() => {
@@ -343,7 +343,7 @@ const CrearEspacio = () => {
 				setModalSubTipoPreguntaOpen(false);
 				setSubTipo("");
 			  }}
-			  style={{ background: "none", border: "1px solid #ccc", borderRadius: 8, padding: "10px 24px", fontWeight: 600, cursor: "pointer" }}
+			  style={{ background: "none", border: "1px solid #ccc", borderRadius: 8, padding: "10px 24px", fontWeight: 600, cursor: "pointer", color: "#111" }}
 			>No</button>
 		  </div>
 		</div>
@@ -366,7 +366,7 @@ const CrearEspacio = () => {
 				setModalSubTipoOpen(false);
 				setNuevoSubTipo("");
 			  }}
-			  style={{ background: "none", border: "1px solid #ccc", borderRadius: 8, padding: "10px 24px", fontWeight: 600, cursor: "pointer" }}
+			  style={{ background: "none", border: "1px solid #ccc", borderRadius: 8, padding: "10px 24px", fontWeight: 600, cursor: "pointer", color: "#111" }}
 			>Cancelar</button>
 			<button
 			  onClick={() => {

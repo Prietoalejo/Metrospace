@@ -315,6 +315,7 @@ const Espacios = () => {
 											style={{
 												fontWeight: 600,
 												fontSize: 18,
+												color: "#888"
 											}}
 										>
 											{espacio.nombre}

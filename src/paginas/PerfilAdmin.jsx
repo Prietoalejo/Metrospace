@@ -5,7 +5,7 @@ import "../estilos/style.css";
 import Breadcrumbs from "../componetes/Breadcrumbs";
 
 function PerfilAdmin() {
-  const { profile, currentUser } = useAuth();
+  const { profile, currentUser, logout } = useAuth();
   const [admin, setAdmin] = useState(null);
 
   // Formatear teléfono
@@ -25,10 +25,14 @@ function PerfilAdmin() {
 
   const navigate = useNavigate();
 
-  // Simulación de logout
-  const handleLogout = () => {
-    alert("Sesión cerrada (simulado)");
-    navigate("/");
+  // Corregido: logout real
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/iniciar-sesion");
+    } catch (error) {
+      alert("Error al cerrar sesión");
+    }
   };
 
   if (!admin) {

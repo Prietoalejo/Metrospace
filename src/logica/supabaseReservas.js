@@ -1,15 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
-import { supabaseUrl, supabaseKey } from '../../supabaseCredentials';
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 /**
- * Inserta una nueva reserva en la tabla reservas
+ * Inserta una nueva reserva en la tabla reserva
  * @param {Object} reserva - Datos de la reserva
  * @returns {Promise<{data, error}>}
  */
-export async function insertReserva(reserva) {
+const insertReserva = async (reserva) => {
   // reserva debe tener: usuario_id, espacio_id, fecha, hora_inicio, hora_fin, requerimientos (opcional), pago
+  const { supabase } = await import('../../supabaseCredentials');
   return await supabase
     .from('reserva')
     .insert([
@@ -24,4 +20,33 @@ export async function insertReserva(reserva) {
         pago: reserva.pago || 0,
       }
     ]);
-}
+};
+
+
+/**
+ * Elimina una reserva por ID en la tabla reserva
+ * @param {number} reservaId - ID de la reserva a eliminar
+ * @returns {Promise<{data, error}>}
+ */
+const deleteReserva = async (reservaId) => {
+  const { supabase } = await import('../../supabaseCredentials');
+  return await supabase
+    .from('reserva')
+    .delete()
+    .eq('id', reservaId);
+};
+
+
+/**
+ * Obtiene el reporte histórico de reservas por espacio desde la tabla reporte_espacio_estado
+ * @returns {Promise<{data, error}>}
+ */
+const getReporteEspacioEstado = async () => {
+  const { supabase } = await import('../../supabaseCredentials');
+  return await supabase
+    .from('reporte_espacio_estado')
+    .select('*')
+    .order('fecha_actualizacion', { ascending: false });
+};
+
+export { insertReserva, deleteReserva, getReporteEspacioEstado };

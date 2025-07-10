@@ -174,6 +174,7 @@ const NuevaReservaCompleta = () => {
         requerimientos,
         pago: totalConImpuesto,
       };
+      console.log('Reserva a enviar:', reserva);
       const { error } = await insertReserva(reserva);
       if (error) {
         setFeedback("Error al registrar la reserva. Intenta de nuevo.");
