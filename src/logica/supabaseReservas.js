@@ -15,9 +15,9 @@ const insertReserva = async (reserva) => {
         fecha: reserva.fecha,
         hora_inicio: reserva.hora_inicio,
         hora_fin: reserva.hora_fin,
-        requerimientos: reserva.requerimientos || null,
+        requerimientos: reserva.requerimientos || null, // corregido a plural
         estado: 'pendiente',
-        pago: reserva.pago || 0,
+        pago: Math.round(reserva.pago) || 0, // redondea a entero
       }
     ]);
 };

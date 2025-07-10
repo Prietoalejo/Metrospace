@@ -171,13 +171,13 @@ const NuevaReservaCompleta = () => {
         fecha,
         hora_inicio: horaInicio,
         hora_fin: horaFin,
-        requerimientos,
+        requerimientos: requerimientos, // corregido a plural
         pago: totalConImpuesto,
       };
       console.log('Reserva a enviar:', reserva);
       const { error } = await insertReserva(reserva);
       if (error) {
-        setFeedback("Error al registrar la reserva. Intenta de nuevo.");
+        setFeedback("Error al registrar la reserva: " + (error.message || JSON.stringify(error)));
       } else {
         setFeedback("¡Reserva realizada con éxito!");
         setFecha(""); setHoraInicio(""); setHoraFin(""); setRequerimientos("");

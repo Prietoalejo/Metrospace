@@ -18,6 +18,15 @@ import Espacios from "./paginas/Espacios";
 import CrearEspacio from "./paginas/CrearEspacio";
 import VerReportes from "./paginas/VerReportes";
 import EditarPerfilEspacio from "./paginas/EditarPerfilEspacio";
+import { supabase } from "../supabaseCredentials";
+import { useEffect } from "react";
+
+// function SupabaseTest() {
+//   useEffect(() => {
+//     supabase.from("reserva").select("*").then(console.log);
+//   }, []);
+//   return null;
+// }
 
 function App() {
   return (
@@ -91,14 +100,14 @@ function App() {
           <Route path="/crear-espacio" element={<CrearEspacio />} /> {/* Nueva ruta */}
           <Route path="/ver-reportes" element={<VerReportes />} />
           <Route path="/editar-espacio/:id" element={<EditarPerfilEspacio />} />
-        <Route
-          path="/editar-perfil"
-          element={
-            <RutaProtegida>
-              <EditarPerfil />
-            </RutaProtegida>
-          }
-        />
+          <Route
+            path="/editar-perfil"
+            element={
+              <RutaProtegida>
+                <EditarPerfil />
+              </RutaProtegida>
+            }
+          />
         </Routes>
       </Router>
     </AuthProvider>
