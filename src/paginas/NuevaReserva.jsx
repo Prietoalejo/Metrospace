@@ -41,6 +41,7 @@ function NuevaReserva() {
     };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	return (
 		<div className="landing" style={{ minHeight: "100vh", background: "#fff" }}>
 			<header
@@ -131,6 +132,8 @@ function NuevaReserva() {
 		</div>
 	);
 =======
+=======
+>>>>>>> 824fac8aff7794f5cf475833f7bd39874ff1ca52
 
     cargarEspacios();
   }, []);
@@ -311,6 +314,9 @@ function NuevaReserva() {
       `}</style>
     </div>
   );
+<<<<<<< HEAD
+>>>>>>> 824fac8aff7794f5cf475833f7bd39874ff1ca52
+=======
 >>>>>>> 824fac8aff7794f5cf475833f7bd39874ff1ca52
 }
 
