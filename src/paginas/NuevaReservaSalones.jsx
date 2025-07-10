@@ -80,7 +80,7 @@ function NuevaReservaSalones() {
 						objectFit: "contain",
 					}} 
 					/>
-				<div style={{ fontWeight: 700, fontSize: 32, color: '#f78628', letterSpacing: -1.2, marginLeft: 80 }}>METROSPACE</div>
+				<div style={{ fontWeight: 700, fontSize: 40, color: '#f78628',  marginLeft: 100,fontFamily: "Roboto Condensed, Helvetica, Arial, sans-serif", }}>METROSPACE</div>
 				<div style={{ display: 'flex', gap: 16 }}>
 					<button className="nav-button" style={{ background: '#222', color: '#fff', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/reservas')}>Reservas</button>
 					<button className="nav-button" style={{ background: '#fff', color: '#222', borderRadius: 8, padding: '8px 24px', fontWeight: 600, cursor: 'pointer' }} onClick={() => navigate('/perfil')}>Mi perfil</button>
